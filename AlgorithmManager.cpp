@@ -35,6 +35,17 @@ void AlgorithmManager::AddTreeBranch(unsigned int depth, TreeNode* ptr) //< firs
 	// Note to myself:
 	// The cost is wrongly done here. Needs rework
 
+
+	// New note:
+	// After considerating the cost calculating problem there is a new problem.
+	// For every layer(depth/type) there have to be new G and H graphs, but if the types are in wrong order they wouldn't have any connection
+	// to the existing types in the configuration. The types HAVE TO be sorted somehow to this problem won't occure.
+	//
+	// Idea: make only one graph. Before starting the tree creation I have to do a graph corrigation (picture).
+	// The first type, that has to be used is the one that comes from the root node in graphs G and H
+
+	//Another idea: ignore the tree and just calculate the costs for variuos configuratons using the graphs. Maybe save the conf. in a tree? xD
+
 	for (auto variant : this->types[depth]->GetVariants())
 	{
 		//AddNewBranchForTheVariant(unsigned int depth, TreeNode * ptr): algorytm zeszytowy:
