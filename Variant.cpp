@@ -1,9 +1,10 @@
 #include "Variant.h"
 
-Variant::Variant(unsigned hei, unsigned wid)
+Variant::Variant(unsigned hei, unsigned wid, Type* parentType)
 {
 	this->height = hei;
 	this->width = wid;
+	this->type = parentType;
 }
 
 unsigned int Variant::GetCost()
@@ -19,4 +20,9 @@ unsigned Variant::Height()
 unsigned Variant::Width()
 {
 	return this->width;
+}
+
+Type* Variant::GetType()
+{
+	return this->type;
 }

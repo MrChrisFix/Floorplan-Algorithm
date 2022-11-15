@@ -128,15 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AlgorithmManager.h" />
-    <ClInclude Include="Requirement.h" />
+    <ClInclude Include="GraphNode.h" />
     <ClInclude Include="TreeNode.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Variant.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlgorithmManager.cpp" />
+    <ClCompile Include="GraphNode.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Requirement.cpp" />
     <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="Type.cpp" />
     <ClCompile Include="Variant.cpp" />

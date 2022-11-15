@@ -13,8 +13,3 @@ Type::~Type()
 	}
 	this->variants.clear();
 }
-
-void Type::AddNewRequirement(Requirement* requirement)
-{
-	this->requirements.push_back(requirement);
-}
