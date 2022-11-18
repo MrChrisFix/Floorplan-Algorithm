@@ -1,16 +1,17 @@
 #pragma once
 #include <vector>
+
+struct TreeNodeLeaf; //<- avoiding a #include deadlock
+
 struct TreeNode
 {
 	TreeNode* parent;
-	unsigned int nodeCost;
-	unsigned int cost;		//< Summary cost of node and parent
 	std::vector<TreeNode*> branches;
 
-	TreeNode(TreeNode* parentPtr, unsigned int Cost);
+	TreeNode(TreeNode* parentPtr);
 	~TreeNode();
 
-	TreeNode* AddNewBranch(unsigned int Cost);
-	void reCalculateCost();
+	TreeNode* AddNewBranch();
+	void AddLeaf(TreeNodeLeaf* leaf);
 };
 

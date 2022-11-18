@@ -1,14 +1,8 @@
 #include "TreeNode.h"
 
-TreeNode::TreeNode(TreeNode* parentPtr, unsigned int Cost)
+TreeNode::TreeNode(TreeNode* parentPtr)
 {
 	this->parent = parentPtr;
-	this->nodeCost = Cost;
-	if (parentPtr == nullptr)
-		this->cost = Cost;
-	else
-		this->cost = parentPtr->cost + Cost;
-
 }
 
 TreeNode::~TreeNode()
@@ -23,18 +17,15 @@ TreeNode::~TreeNode()
 	this->parent = nullptr;
 }
 
-TreeNode* TreeNode::AddNewBranch(unsigned int Cost)
+TreeNode* TreeNode::AddNewBranch()
 {
-	TreeNode* node = new TreeNode(this, Cost);
+	TreeNode* node = new TreeNode(this);
 	this->branches.push_back(node);
 
 	return node;
 }
 
-void TreeNode::reCalculateCost()
+void TreeNode::AddLeaf(TreeNodeLeaf* leaf)
 {
-	if (this->parent != nullptr)
-		this->cost = this->nodeCost + this->parent->cost;
-	else
-		this->cost = this->nodeCost;
+	branches.push_back((TreeNode*) leaf);
 }
