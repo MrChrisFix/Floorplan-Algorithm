@@ -3,12 +3,15 @@
 #include "Type.h"
 #include <string>
 #include "TreeNode.h"
+#include "GraphNode.h"
 
 class AlgorithmManager
 {
 private:
 	std::vector<Type*> types;
 	TreeNode* treeRoot;
+
+	GraphNode *Graph_G, *Graph_H;
 
 public:
 	AlgorithmManager();

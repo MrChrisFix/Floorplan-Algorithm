@@ -32,6 +32,11 @@ unsigned GraphNode::GoThroughBranch(std::vector<Variant> &combination) const
     return max;
 }
 
+void GraphNode::removeChildNode(GraphNode* node)
+{
+    this->next.erase(std::find(this->next.begin(), this->next.end(), node));
+}
+
 GraphNode::GraphNode(bool Root, bool countHeight)
 {
     this->isRoot = Root;
@@ -46,6 +51,29 @@ GraphNode::GraphNode(Type* theType, bool countHeight)
     this->isRoot = false;
     this->type = theType;
     this->calcHeight = countHeight;
+}
+
+GraphNode::~GraphNode()
+{
+    //Detach from all "parents"
+    for (auto parent : this->prev)
+    {
+        parent->removeChildNode(this);
+        parent = nullptr;
+    }
+
+    for (auto node : this->next)
+    {
+        if (node != nullptr)
+        {
+            delete node;
+            node = nullptr;
+        }
+    }
+
+    this->prev.clear();
+    this->next.clear();
+    this->type = nullptr;
 }
 
 void GraphNode::AddNodeToGraph(GraphNode* node)

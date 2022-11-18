@@ -7,6 +7,7 @@
 /// </summary>
 class GraphNode
 {
+private:
 	std::vector<GraphNode*> next;
 	std::vector<GraphNode*> prev;
 
@@ -15,8 +16,6 @@ class GraphNode
 	bool isRoot;
 	bool isEnd;
 	bool calcHeight;
-
-	unsigned GoThroughBranch(std::vector<Variant> &combination) const;
 
 public:
 	GraphNode(bool isRoot, bool countHeight);			//<- Root & End constructor
@@ -28,5 +27,8 @@ public:
 	unsigned int calculateCost(std::vector<Variant> combination) const;
 
 
+private:
+	unsigned GoThroughBranch(std::vector<Variant>& combination) const;
+	void removeChildNode(GraphNode* node);
 };
 

@@ -1,6 +1,20 @@
 #include "AlgorithmManager.h"
 #include "TreeNodeLeaf.h"
 
+AlgorithmManager::AlgorithmManager()
+{
+	this->Graph_G = new GraphNode(true, false);
+	this->Graph_H = new GraphNode(true, true);
+	this->treeRoot = new TreeNode(nullptr);
+}
+
+AlgorithmManager::~AlgorithmManager()
+{
+	delete this->Graph_G;
+	delete this->Graph_H;
+	delete this->treeRoot;
+}
+
 void AlgorithmManager::setTypes(std::vector<Type*> Types)
 {
 	this->types = Types;
@@ -9,9 +23,8 @@ void AlgorithmManager::setTypes(std::vector<Type*> Types)
 void AlgorithmManager::CreateTree()
 {
 	std::vector<Variant*> VariantStack;
-	TreeNode* root = new TreeNode(nullptr);
 
-	AddTreeBranch(0, VariantStack, root);
+	AddTreeBranch(0, VariantStack, this->treeRoot);
 
 	/* Old stuff
 	std::vector<TreeNode*> tempRoots;
