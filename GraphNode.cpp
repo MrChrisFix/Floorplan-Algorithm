@@ -1,6 +1,6 @@
 #include "GraphNode.h"
 
-unsigned GraphNode::GoThroughBranch(std::vector<Variant> &combination) const
+unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
 {
     if (this->isEnd)
         return 0;
@@ -14,12 +14,12 @@ unsigned GraphNode::GoThroughBranch(std::vector<Variant> &combination) const
         {
             for (auto& var : combination)
             {
-                if (var.GetType() == this->type)
+                if (var->GetType() == this->type)
                 {
                     if (this->calcHeight)
-                        myCost = var.Height();
+                        myCost = var->Height();
                     else
-                        myCost = var.Width();
+                        myCost = var->Width();
                     break;
                 }
             }
@@ -82,7 +82,7 @@ void GraphNode::AddNodeToGraph(GraphNode* node)
     node->prev.push_back(this);
 }
 
-unsigned int GraphNode::calculateCost(std::vector<Variant> combination) const
+unsigned int GraphNode::calculateCost(std::vector<Variant*> combination) const
 {
     if(!this->isRoot) //Only the root should use this method
         return 0;

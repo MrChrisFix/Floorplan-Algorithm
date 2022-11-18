@@ -59,7 +59,9 @@ void AlgorithmManager::AddTreeBranch(unsigned int depth, std::vector<Variant*> &
 
 		if (depth == this->types.size() - 1) //last type -> leaf
 		{
-			TreeNodeLeaf* leaf = new TreeNodeLeaf(ptr, 1, variantStack);
+			unsigned G_Value = this->Graph_G->calculateCost(variantStack);
+			unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+			TreeNodeLeaf* leaf = new TreeNodeLeaf(ptr, G_Value * H_Value, variantStack);
 			ptr->AddLeaf(leaf);
 		}
 		else if (depth < this->types.size())

@@ -24,11 +24,11 @@ public:
 
 	void AddNodeToGraph(GraphNode* node);
 
-	unsigned int calculateCost(std::vector<Variant> combination) const;
+	unsigned int calculateCost(std::vector<Variant*> combination) const;
 
 
 private:
-	unsigned GoThroughBranch(std::vector<Variant>& combination) const;
+	unsigned GoThroughBranch(std::vector<Variant*>& combination) const;
 	void removeChildNode(GraphNode* node);
 };
 
