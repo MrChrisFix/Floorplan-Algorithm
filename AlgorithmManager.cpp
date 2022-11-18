@@ -1,4 +1,5 @@
 #include "AlgorithmManager.h"
+#include "TreeNodeLeaf.h"
 
 void AlgorithmManager::setTypes(std::vector<Type*> Types)
 {
@@ -7,6 +8,12 @@ void AlgorithmManager::setTypes(std::vector<Type*> Types)
 
 void AlgorithmManager::CreateTree()
 {
+	std::vector<Variant*> VariantStack;
+	TreeNode* root = new TreeNode(nullptr);
+
+	AddTreeBranch(0, VariantStack, root);
+
+	/* Old stuff
 	std::vector<TreeNode*> tempRoots;
 	for (int i = 0; i < this->types.size(); i++)
 	{
@@ -28,41 +35,41 @@ void AlgorithmManager::CreateTree()
 		tempRoots.push_back(node);
 	}
 	//Next: combine together
+	*/
 }
 
-void AlgorithmManager::AddTreeBranch(unsigned int depth, TreeNode* ptr) //< first ptr is root
+void AlgorithmManager::AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr) //< first ptr is root
 {
-	// Note to myself:
-	// The cost is wrongly done here. Needs rework
-
-
-	// New note:
-	// After considerating the cost calculating problem there is a new problem.
-	// For every layer(depth/type) there have to be new G and H graphs, but if the types are in wrong order they wouldn't have any connection
-	// to the existing types in the configuration. The types HAVE TO be sorted somehow to this problem won't occure.
-	//
-	// Idea: make only one graph. Before starting the tree creation I have to do a graph corrigation (picture).
-	// The first type, that has to be used is the one that comes from the root node in graphs G and H
-
-	//Another idea: ignore the tree and just calculate the costs for variuos configuratons using the graphs. Maybe save the conf. in a tree? xD
-
 	for (auto variant : this->types[depth]->GetVariants())
 	{
-		//AddNewBranchForTheVariant(unsigned int depth, TreeNode * ptr): algorytm zeszytowy:
+		variantStack.push_back(variant);
 
+		if (depth == this->types.size() - 1) //last type -> leaf
+		{
+			TreeNodeLeaf* leaf = new TreeNodeLeaf(ptr, 1, variantStack);
+			ptr->AddLeaf(leaf);
+		}
+		else if (depth < this->types.size())
+		{
+			TreeNode* newNode = ptr->AddNewBranch();
+			AddTreeBranch(depth + 1, variantStack ,newNode); // Going deeper into the tree
+		}
 
+		variantStack.pop_back();
+
+		/* Old cost calculatons
 		unsigned int cost;
 		if (ptr->cost == UINT32_MAX)
 			cost = UINT32_MAX;
 		else
 		{
-			//Check the value and if the elements are good size ergo use my notebook alg
+			Check the value and if the elements are good size ergo use my notebook alg
 			if (ptr == nullptr)
 				cost = variant->GetCost();
 			else
 			{
 				bool doesFit = false;
-				//doesFit = variant->Height() <= this->types[depth]->GetRequirements(); //TODO
+				doesFit = variant->Height() <= this->types[depth]->GetRequirements(); //TODO
 
 
 				if (doesFit)
@@ -71,14 +78,7 @@ void AlgorithmManager::AddTreeBranch(unsigned int depth, TreeNode* ptr) //< firs
 					cost = UINT32_MAX;
 			}
 		}
-
-		TreeNode* newNode = ptr->AddNewBranch(cost);
-
-		//Check if there are more types to add below (depth)
-		if (depth < this->types.size())
-			AddTreeBranch(depth + 1, newNode); //<Wchodzimy g³êbiej
-		else
-			return;
+		*/
 	}
 
 }

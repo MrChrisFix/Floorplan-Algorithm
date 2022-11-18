@@ -13,3 +13,8 @@ Type::~Type()
 	}
 	this->variants.clear();
 }
+
+std::vector<Variant*> Type::GetVariants()
+{
+	return this->variants;
+}

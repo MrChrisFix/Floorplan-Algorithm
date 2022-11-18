@@ -21,6 +21,6 @@ public:
 private:
 	void CreateTree();
 
-	void AddTreeBranch(unsigned int depth, TreeNode* ptr);
+	void AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr);
 };
 

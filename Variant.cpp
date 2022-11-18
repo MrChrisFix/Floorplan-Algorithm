@@ -7,6 +7,11 @@ Variant::Variant(unsigned hei, unsigned wid, Type* parentType)
 	this->type = parentType;
 }
 
+Variant::~Variant()
+{
+	this->type = nullptr;
+}
+
 unsigned int Variant::GetCost()
 {
 	return this->height * this->width;
