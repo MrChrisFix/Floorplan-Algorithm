@@ -18,14 +18,18 @@ private:
 	bool calcHeight;
 
 public:
-	GraphNode(bool isRoot, bool countHeight);			//<- Root & End constructor
-	GraphNode(Type* theType, bool countHeight);			//<- Node constructor
+	GraphNode(bool isRoot, bool is_H_Graph);			//<- Root & End constructor
+	GraphNode(Type* theType, bool is_H_Graph);			//<- Node constructor
 	~GraphNode();
 
-	void AddNodeToGraph(GraphNode* node);
+	//Adds child in the 'next' vector
+	void AddNodeToGraph(GraphNode* node);		
 
 	unsigned int calculateCost(std::vector<Variant*> combination) const;
+	
+	GraphNode* FindNodeByType(Type* searched);
 
+	Type* GetType();
 
 private:
 	unsigned GoThroughBranch(std::vector<Variant*>& combination) const;

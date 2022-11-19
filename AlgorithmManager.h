@@ -19,11 +19,13 @@ public:
 
 	void StartCalculations();
 	void setTypes(std::vector<Type*> Types);
+	void Populate_G_Graph(GraphNode* parentNode);
+	void Populate_H_Graph(GraphNode* currentNode);
 	void importTypesFromXML(std::string pathToXml);
 
 private:
+	void PopulateGraphs();
 	void CreateTree();
-
 	void AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr);
 };
 

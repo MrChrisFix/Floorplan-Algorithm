@@ -10,9 +10,17 @@ private:
 
 	std::string Name;
 
+
+
 public:
 	Type();
 	~Type();
+
+	//Requirements
+	std::vector<Type*> right;
+	std::vector<Type*> down;
+	std::vector<Type*> left;
+	std::vector<Type*> up;
 
 	void setName(std::string name);
 	std::string GetName();

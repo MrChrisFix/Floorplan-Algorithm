@@ -20,6 +20,91 @@ void AlgorithmManager::setTypes(std::vector<Type*> Types)
 	this->types = Types;
 }
 
+void AlgorithmManager::Populate_G_Graph(GraphNode* currentNode)
+{
+	auto currentType = currentNode->GetType();
+
+	if (currentType == nullptr) throw;
+
+	if (currentType->up.empty())
+	{
+		//TODO: add end node
+	}
+
+	if (currentType->up.empty())
+	{
+		this->Graph_G->AddNodeToGraph(currentNode);
+		return;
+	}
+
+	for (auto up : currentType->up)
+	{
+		auto foundUp = this->Graph_G->FindNodeByType(up); //is the type upwards already in the graph?
+		if (foundUp != nullptr)
+			foundUp->AddNodeToGraph(currentNode);
+		else
+		{
+			GraphNode* newUp = new GraphNode(up, false);
+			newUp->AddNodeToGraph(currentNode);
+			Populate_G_Graph(newUp);
+		}
+	}
+}
+
+void AlgorithmManager::Populate_H_Graph(GraphNode* currentNode)
+{
+	auto currentType = currentNode->GetType();
+
+	if (currentType == nullptr) throw;
+
+	if (currentType->right.empty())
+	{
+		//TODO: add end node
+	}
+
+	if (currentType->left.empty())
+	{
+		this->Graph_H->AddNodeToGraph(currentNode);
+		return;
+	}
+
+	for (auto left : currentType->left)
+	{
+		auto foundLeft = this->Graph_H->FindNodeByType(left); //is the type upwards already in the graph?
+		if (foundLeft != nullptr)
+			foundLeft->AddNodeToGraph(currentNode);
+		else
+		{
+			GraphNode* newLeft = new GraphNode(left, false);
+			newLeft->AddNodeToGraph(currentNode);
+			Populate_H_Graph(newLeft);
+		}
+	}
+}
+
+void AlgorithmManager::PopulateGraphs()
+{
+	for (auto type : this->types)
+	{
+		//Check if the type is already in the graphs
+		if (this->Graph_G->FindNodeByType(type) != nullptr)
+			continue;
+
+
+		//G Graph
+		auto newNode = new GraphNode(type, false);
+		this->Populate_G_Graph(newNode);
+
+
+
+		//H Graph
+		newNode = new GraphNode(type, true);
+		this->Populate_H_Graph(newNode);
+
+		//GraphNode* endHnode = new GraphNode(false, true);
+	}
+}
+
 void AlgorithmManager::CreateTree()
 {
 	std::vector<Variant*> VariantStack;

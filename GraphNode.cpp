@@ -37,20 +37,20 @@ void GraphNode::removeChildNode(GraphNode* node)
     this->next.erase(std::find(this->next.begin(), this->next.end(), node));
 }
 
-GraphNode::GraphNode(bool Root, bool countHeight)
+GraphNode::GraphNode(bool Root, bool is_H_Graph)
 {
     this->isRoot = Root;
     this->isEnd = !Root;
-    this->calcHeight = countHeight;
+    this->calcHeight = is_H_Graph;
     this->type = nullptr;
 }
 
-GraphNode::GraphNode(Type* theType, bool countHeight)
+GraphNode::GraphNode(Type* theType, bool is_H_Graph)
 {
     this->isEnd = false;
     this->isRoot = false;
     this->type = theType;
-    this->calcHeight = countHeight;
+    this->calcHeight = is_H_Graph;
 }
 
 GraphNode::~GraphNode()
@@ -89,4 +89,14 @@ unsigned int GraphNode::calculateCost(std::vector<Variant*> combination) const
 
     return GoThroughBranch(combination);
 
+}
+
+GraphNode* GraphNode::FindNodeByType(Type* searched)
+{
+    return nullptr;
+}
+
+Type* GraphNode::GetType()
+{
+    return this->type;
 }
