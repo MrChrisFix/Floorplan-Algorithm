@@ -8,12 +8,10 @@ class Type
 private:
 	std::vector<Variant*> variants;
 
-	std::string Name;
-
-
+	std::string name;	//Only for cosmetic purposes
 
 public:
-	Type();
+	Type(std::string typeName);
 	~Type();
 
 	//Requirements
@@ -22,11 +20,12 @@ public:
 	std::vector<Type*> left;
 	std::vector<Type*> up;
 
-	void setName(std::string name);
+	void setName(std::string newName);
 	std::string GetName();
 
 	std::vector<Variant*> GetVariants();
-	void AddVariant(Variant* variant); //TODO: add overload with variant creation info;
+	void AddVariant(Variant* variant);
+	void AddVariant(unsigned varWidth, unsigned varHeight);
 
 };
 

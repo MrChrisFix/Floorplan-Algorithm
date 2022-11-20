@@ -15,7 +15,7 @@ public:
 
 	unsigned int GetCost();
 
-	unsigned Height();
-	unsigned Width();
+	unsigned GetHeight();
+	unsigned GetWidth();
 	Type* GetType();
 };

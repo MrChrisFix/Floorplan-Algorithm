@@ -17,9 +17,9 @@ unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
                 if (var->GetType() == this->type)
                 {
                     if (this->calcHeight)
-                        myCost = var->Height();
+                        myCost = var->GetHeight();
                     else
-                        myCost = var->Width();
+                        myCost = var->GetWidth();
                     break;
                 }
             }

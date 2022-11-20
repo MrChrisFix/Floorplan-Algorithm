@@ -17,12 +17,12 @@ unsigned int Variant::GetCost()
 	return this->height * this->width;
 }
 
-unsigned Variant::Height()
+unsigned Variant::GetHeight()
 {
 	return this->height;
 }
 
-unsigned Variant::Width()
+unsigned Variant::GetWidth()
 {
 	return this->width;
 }
