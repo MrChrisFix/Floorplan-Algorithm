@@ -133,6 +133,7 @@
     <ClInclude Include="TreeNodeLeaf.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Variant.h" />
+    <ClInclude Include="XMLFileManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlgorithmManager.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="TreeNodeLeaf.cpp" />
     <ClCompile Include="Type.cpp" />
     <ClCompile Include="Variant.cpp" />
+    <ClCompile Include="XMLFileManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,7 +21,7 @@ public:
 	void setTypes(std::vector<Type*> Types);
 	void Populate_G_Graph(GraphNode* parentNode);
 	void Populate_H_Graph(GraphNode* currentNode);
-	void importTypesFromXML(std::string pathToXml);
+	void importTypesFromXML(std::string pathToXml = "");
 
 private:
 	void PopulateGraphs();
