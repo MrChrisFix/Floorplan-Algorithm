@@ -1,0 +1,23 @@
+<?xml varsion="1.0" encoding="UTF-8"?>
+<Types>
+    <Type name="asdf">
+        <Variants>
+            <Variant width="" height=""/>
+            <Variant width="" height=""/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="" direction=""/>
+            <Requirement typeName="" direction=""/>
+        </Requirements>
+    </Type>
+    <Type name="asdf2">
+        <Variants>
+            <Variant width="" height=""/>
+            <Variant width="" height=""/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="" direction=""/>
+            <Requirement typeName="" direction=""/>
+        </Requirements>
+    </Type>
+</Types>

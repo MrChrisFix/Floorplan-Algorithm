@@ -82,7 +82,7 @@ void AlgorithmManager::Populate_H_Graph(GraphNode* currentNode)
 	}
 }
 
-void AlgorithmManager::importTypesFromXML(std::string pathToXml = "")
+void AlgorithmManager::importTypesFromXML(std::string pathToXml)
 {
 	//TODO: XMLFileManager object here
 }
