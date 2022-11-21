@@ -2,22 +2,44 @@
 <Types>
     <Type name="asdf">
         <Variants>
-            <Variant width="" height=""/>
-            <Variant width="" height=""/>
+            <Variant width="1" height="1"/>
+            <Variant width="10" height="10"/>
+            <Variant width="12" height="12"/>
+            <Variant width="11" height="11"/>
         </Variants>
         <Requirements>
-            <Requirement typeName="" direction=""/>
-            <Requirement typeName="" direction=""/>
+            <Requirement typeName="asdf2" direction="R"/>
+            <Requirement typeName="asdf4" direction="D"/>
         </Requirements>
     </Type>
     <Type name="asdf2">
         <Variants>
-            <Variant width="" height=""/>
-            <Variant width="" height=""/>
+            <Variant width="5" height="1"/>
+            <Variant width="1" height="8"/>
         </Variants>
         <Requirements>
-            <Requirement typeName="" direction=""/>
-            <Requirement typeName="" direction=""/>
+            <Requirement typeName="asdf3" direction="D"/>
+            <Requirement typeName="asdf" direction="L"/>
+        </Requirements>
+    </Type>
+    <Type name="asdf3">
+        <Variants>
+            <Variant width="1" height="3"/>
+            <Variant width="7" height="1"/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="asdf4" direction="L"/>
+            <Requirement typeName="asdf2" direction="U"/>
+        </Requirements>
+    </Type>
+    <Type name="asdf4">
+        <Variants>
+            <Variant width="1" height="44"/>
+            <Variant width="44" height="1"/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="asdf" direction="U"/>
+            <Requirement typeName="asdf3" direction="R"/>
         </Requirements>
     </Type>
 </Types>
