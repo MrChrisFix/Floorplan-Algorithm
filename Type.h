@@ -32,6 +32,6 @@ public:
 	/// </summary>
 	/// <param name="side">The side of the requirement.<br/> Options: 'U'(Up), 'D'(Down), 'R'(Right), 'L'(Left)</param>
 	/// <param name="type">The type of the requirement</param>
-	void AddRequirement(char side, Type* type);
+	void AddRequirement(char side, Type* type, bool onBoth = true);
 };
 

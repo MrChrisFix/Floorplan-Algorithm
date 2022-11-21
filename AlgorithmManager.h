@@ -12,20 +12,25 @@ private:
 	TreeNode* treeRoot;
 
 	GraphNode *Graph_G, *Graph_H;
+	GraphNode *Graph_G_End, *Graph_H_End;
 
 public:
 	AlgorithmManager();
 	~AlgorithmManager();
 
-	void StartCalculations();
+	std::pair<unsigned,std::vector<Variant*>> StartCalculations();
 	void setTypes(std::vector<Type*> Types);
-	void Populate_G_Graph(GraphNode* parentNode);
-	void Populate_H_Graph(GraphNode* currentNode);
-	void importTypesFromXML(std::string pathToXml = "");
 
 private:
 	void PopulateGraphs();
 	void CreateTree();
+	std::pair<unsigned, std::vector<Variant*>> FindOptimal();
+
+
+
+	void ReadLeaf(TreeNode* currentNode, unsigned &currentMin, TreeNodeLeaf*& currentBest);
+	void Populate_G_Graph(GraphNode* parentNode);
+	void Populate_H_Graph(GraphNode* currentNode);
 	void AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr);
 };
 

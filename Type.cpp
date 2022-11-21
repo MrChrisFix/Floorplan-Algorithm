@@ -41,29 +41,33 @@ void Type::AddVariant(unsigned varWidth, unsigned varHeight)
 	this->variants.push_back(var);
 }
 
-void Type::AddRequirement(char side, Type* type)
+void Type::AddRequirement(char side, Type* type, bool onBoth)
 {
 	switch (side)
 	{
 		case 'U': case 'u':
 		{
 			this->up.push_back(type);
-			type->down.push_back(this);
+			if(onBoth) type->down.push_back(this);
+			break;
 		}
 		case 'D': case 'd':
 		{
 			this->down.push_back(type);
-			type->up.push_back(this);
+			if (onBoth) type->up.push_back(this);
+			break;
 		}
 		case 'R': case 'r':
 		{
 			this->right.push_back(type);
-			type->left.push_back(this);
+			if (onBoth) type->left.push_back(this);
+			break;
 		}
 		case 'L': case 'l':
 		{
 			this->left.push_back(type);
-			type->right.push_back(this);
+			if (onBoth) type->right.push_back(this);
+			break;
 		}
 		default:
 			break;

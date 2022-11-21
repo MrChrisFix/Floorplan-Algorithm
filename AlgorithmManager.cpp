@@ -3,8 +3,10 @@
 
 AlgorithmManager::AlgorithmManager()
 {
-	this->Graph_G = new GraphNode(true, false);
-	this->Graph_H = new GraphNode(true, true);
+	this->Graph_G = new GraphNode(true, true);
+	this->Graph_H = new GraphNode(true, false);
+	this->Graph_G_End = new GraphNode(false, true);
+	this->Graph_H_End = new GraphNode(false, false);
 	this->treeRoot = new TreeNode(nullptr);
 }
 
@@ -13,6 +15,13 @@ AlgorithmManager::~AlgorithmManager()
 	delete this->Graph_G;
 	delete this->Graph_H;
 	delete this->treeRoot;
+}
+
+std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
+{
+	PopulateGraphs();
+	CreateTree();
+	return FindOptimal();
 }
 
 void AlgorithmManager::setTypes(std::vector<Type*> Types)
@@ -26,9 +35,9 @@ void AlgorithmManager::Populate_G_Graph(GraphNode* currentNode)
 
 	if (currentType == nullptr) throw;
 
-	if (currentType->up.empty())
+	if (currentType->down.empty())
 	{
-		//TODO: add end node
+		currentNode->AddNodeToGraph(this->Graph_G_End);
 	}
 
 	if (currentType->up.empty())
@@ -44,7 +53,7 @@ void AlgorithmManager::Populate_G_Graph(GraphNode* currentNode)
 			foundUp->AddNodeToGraph(currentNode);
 		else
 		{
-			GraphNode* newUp = new GraphNode(up, false);
+			GraphNode* newUp = new GraphNode(up, true);
 			newUp->AddNodeToGraph(currentNode);
 			Populate_G_Graph(newUp);
 		}
@@ -59,7 +68,7 @@ void AlgorithmManager::Populate_H_Graph(GraphNode* currentNode)
 
 	if (currentType->right.empty())
 	{
-		//TODO: add end node
+		currentNode->AddNodeToGraph(this->Graph_H_End);
 	}
 
 	if (currentType->left.empty())
@@ -82,11 +91,6 @@ void AlgorithmManager::Populate_H_Graph(GraphNode* currentNode)
 	}
 }
 
-void AlgorithmManager::importTypesFromXML(std::string pathToXml)
-{
-	//TODO: XMLFileManager object here
-}
-
 void AlgorithmManager::PopulateGraphs()
 {
 	for (auto type : this->types)
@@ -95,15 +99,15 @@ void AlgorithmManager::PopulateGraphs()
 		if (this->Graph_G->FindNodeByType(type) != nullptr)
 			continue;
 
-
 		//G Graph
-		auto newNode = new GraphNode(type, false);
+		auto newNode = new GraphNode(type, true);
 		this->Populate_G_Graph(newNode);
 
-
+		if (this->Graph_H->FindNodeByType(type) != nullptr)
+			continue;
 
 		//H Graph
-		newNode = new GraphNode(type, true);
+		newNode = new GraphNode(type, false);
 		this->Populate_H_Graph(newNode);
 
 		//GraphNode* endHnode = new GraphNode(false, true);
@@ -139,6 +143,37 @@ void AlgorithmManager::CreateTree()
 	}
 	//Next: combine together
 	*/
+}
+
+std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::FindOptimal()
+{
+	unsigned min = -1;
+	TreeNodeLeaf* best;
+	ReadLeaf(this->treeRoot, min, best);
+	std::pair<unsigned, std::vector<Variant*>> returned;
+	returned.first = min;
+	returned.second = best->composition;
+	return returned;
+}
+
+void AlgorithmManager::ReadLeaf(TreeNode* currentNode, unsigned &currentMin, TreeNodeLeaf* &currentBest)
+{
+	if (currentNode->branches.empty())
+	{
+		TreeNodeLeaf* leaf = (TreeNodeLeaf*)currentNode;
+		if (leaf->cost < currentMin)
+		{
+			currentMin = leaf->cost;
+			currentBest = leaf;
+		}
+	}
+	else
+	{
+		for (auto branch : currentNode->branches)
+		{
+			ReadLeaf(branch, currentMin, currentBest);
+		}
+	}
 }
 
 void AlgorithmManager::AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr) //< first ptr is root

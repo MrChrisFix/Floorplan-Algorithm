@@ -93,6 +93,13 @@ unsigned int GraphNode::calculateCost(std::vector<Variant*> combination) const
 
 GraphNode* GraphNode::FindNodeByType(Type* searched)
 {
+    for (auto node : this->next)
+    {
+        if (node->type == searched)
+            return node;
+        node->FindNodeByType(searched);
+    }
+
     return nullptr;
 }
 
