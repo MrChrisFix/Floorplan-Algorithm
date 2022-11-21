@@ -15,7 +15,7 @@ private:
 
 public:
 	XMLFileManager();
-	//~XMLFileManager();
+	~XMLFileManager();
 
 	std::vector<Type*> ReadFromXML(std::string path);
 	void SaveToXML(std::vector<Type*> types, std::string path);

@@ -55,19 +55,11 @@ GraphNode::GraphNode(Type* theType, bool is_H_Graph)
 
 GraphNode::~GraphNode()
 {
-    //Detach from all "parents"
-    for (auto parent : this->prev)
-    {
-        parent->removeChildNode(this);
-        parent = nullptr;
-    }
-
     for (auto node : this->next)
     {
-        if (node != nullptr)
+        if (node->prev.size() == 1) //I am the only parent
         {
             delete node;
-            node = nullptr;
         }
     }
 

@@ -16,6 +16,11 @@ XMLFileManager::XMLFileManager()
 	this->XMLFile = nullptr;
 }
 
+XMLFileManager::~XMLFileManager()
+{
+	delete this->XMLFile;
+}
+
 void XMLFileManager::SaveToXML(std::vector<Type*> types, std::string path)
 {
 	std::ofstream file;
