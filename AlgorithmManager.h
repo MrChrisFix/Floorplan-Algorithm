@@ -1,7 +1,8 @@
 #pragma once
-#include <vector>
-#include "Type.h"
 #include <string>
+#include <vector>
+#include <mutex>
+#include "Type.h"
 #include "TreeNode.h"
 #include "GraphNode.h"
 
@@ -14,6 +15,15 @@ private:
 	GraphNode *Graph_G, *Graph_H;
 	GraphNode *Graph_G_End, *Graph_H_End;
 
+	//Calc
+	unsigned bestValue;
+	std::vector<Variant*> bestCombination;
+
+	//Multithreading
+	bool caltulateMultithread;
+	std::mutex guard;
+	std::vector<std::thread> threadPool;
+
 public:
 	AlgorithmManager();
 	~AlgorithmManager();
@@ -23,14 +33,18 @@ public:
 
 private:
 	void PopulateGraphs();
-	void CreateTree();
-	std::pair<unsigned, std::vector<Variant*>> FindOptimal();
+	//[[deprecated]] void CreateTree();
+	void FindOptimal();
+	//[[deprecated]] std::pair<unsigned, std::vector<Variant*>> FindOptimal_old();
 
+	void FindSinglethread(unsigned depth, std::vector<Variant*> variantStack);
+	void FindMultithread(unsigned depth, std::vector<Variant*> variantStack);
+	void CalculateCosts(std::vector<Variant*> variantStack);
 
-
-	void ReadLeaf(TreeNode* currentNode, unsigned &currentMin, TreeNodeLeaf*& currentBest);
+	
+	//[[deprecated]] void ReadLeaf(TreeNode* currentNode, unsigned &currentMin, TreeNodeLeaf*& currentBest);
 	void Populate_G_Graph(GraphNode* parentNode);
 	void Populate_H_Graph(GraphNode* currentNode);
-	void AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr);
+	//[[deprecated]] void AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr);
 };
 

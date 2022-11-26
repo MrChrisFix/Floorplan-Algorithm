@@ -8,6 +8,9 @@ AlgorithmManager::AlgorithmManager()
 	this->Graph_G_End = new GraphNode(false, true);
 	this->Graph_H_End = new GraphNode(false, false);
 	this->treeRoot = new TreeNode(nullptr);
+
+	this->bestValue = -1;
+	this->caltulateMultithread = false;
 }
 
 AlgorithmManager::~AlgorithmManager()
@@ -20,8 +23,10 @@ AlgorithmManager::~AlgorithmManager()
 std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
 {
 	PopulateGraphs();
-	CreateTree();
-	return FindOptimal();
+	//CreateTree();
+	FindOptimal();
+
+	return std::pair<unsigned, std::vector<Variant*>>(this->bestValue, this->bestCombination);
 }
 
 void AlgorithmManager::setTypes(std::vector<Type*> Types)
@@ -112,14 +117,36 @@ void AlgorithmManager::PopulateGraphs()
 	}
 }
 
+/*
 void AlgorithmManager::CreateTree()
 {
 	std::vector<Variant*> VariantStack;
 
 	AddTreeBranch(0, VariantStack, this->treeRoot);
 }
+*/
 
-std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::FindOptimal()
+void AlgorithmManager::FindOptimal()
+{
+	std::vector<Variant*> VariantStack;
+
+	if (this->caltulateMultithread)
+	{
+		FindMultithread(0, VariantStack);
+
+		for (auto& thread : this->threadPool)
+		{
+			thread.join();
+		}
+	}
+	else
+	{
+		FindSinglethread(0, VariantStack);
+	}
+}
+
+/*
+std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::FindOptimal_old()
 {
 	unsigned min = -1;
 	TreeNodeLeaf* best;
@@ -129,7 +156,86 @@ std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::FindOptimal()
 	returned.second = best->composition;
 	return returned;
 }
+*/
 
+void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> variantStack)
+{
+	for (auto variant : this->types[depth]->GetVariants())
+	{
+		variantStack.push_back(variant);
+
+		if (depth == this->types.size() - 1)
+		{
+			unsigned G_Value = this->Graph_G->calculateCost(variantStack);
+			unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+			if (G_Value * H_Value < this->bestValue)
+			{
+				this->bestValue = G_Value * H_Value;
+				this->bestCombination = variantStack;
+			}
+		}
+		else if (depth < this->types.size())
+		{
+			FindSinglethread(depth + 1, variantStack); // Going deeper into the "tree"
+		}
+
+		variantStack.pop_back();
+	}
+}
+
+void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> variantStack)
+{
+	auto variantVector = this->types[depth]->GetVariants();
+	unsigned short varAmount = variantVector.size();
+
+	for (int i = 0; i < varAmount; i++)
+	{
+		variantStack.push_back(variantVector[i]);
+
+		if (i == varAmount - 1)
+		{
+			// Parent
+			if (depth == this->types.size() - 1)
+			{
+				CalculateCosts(variantStack);
+			}
+			else
+			{
+				FindMultithread(depth + 1, variantStack);
+			}
+		}
+		else
+		{
+			// Children
+			if (depth == this->types.size() - 1)
+			{
+				this->threadPool.push_back(std::thread(&AlgorithmManager::CalculateCosts, this, variantStack));
+			}
+			else
+			{
+				this->threadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, depth + 1, variantStack));
+			}
+		}
+		variantStack.pop_back();
+	}
+}
+
+void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
+{
+	unsigned G_Value = this->Graph_G->calculateCost(variantStack);
+	unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+	auto value = G_Value * H_Value;
+
+	this->guard.lock();
+	if (this->bestValue > value)
+	{
+		this->bestValue = value;
+		this->bestCombination = variantStack;
+	}
+	this->guard.unlock();
+}
+
+/*
 void AlgorithmManager::ReadLeaf(TreeNode* currentNode, unsigned &currentMin, TreeNodeLeaf* &currentBest)
 {
 	if (currentNode->branches.empty())
@@ -149,7 +255,8 @@ void AlgorithmManager::ReadLeaf(TreeNode* currentNode, unsigned &currentMin, Tre
 		}
 	}
 }
-
+*/
+/*
 void AlgorithmManager::AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr) //< first ptr is root
 {
 	for (auto variant : this->types[depth]->GetVariants())
@@ -172,4 +279,4 @@ void AlgorithmManager::AddTreeBranch(unsigned int depth, std::vector<Variant*> &
 		variantStack.pop_back();
 	}
 }
-
+*/
