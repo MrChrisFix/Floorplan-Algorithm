@@ -7,17 +7,17 @@ AlgorithmManager::AlgorithmManager()
 	this->Graph_H = new GraphNode(true, false);
 	this->Graph_G_End = new GraphNode(false, true);
 	this->Graph_H_End = new GraphNode(false, false);
-	this->treeRoot = new TreeNode(nullptr);
+	//this->treeRoot = new TreeNode(nullptr);
 
 	this->bestValue = -1;
-	this->caltulateMultithread = false;
+	this->caltulateMultithread = true; //TODO: make as argument
 }
 
 AlgorithmManager::~AlgorithmManager()
 {
 	delete this->Graph_G;
 	delete this->Graph_H;
-	delete this->treeRoot;
+	//delete this->treeRoot;
 }
 
 std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
@@ -133,11 +133,6 @@ void AlgorithmManager::FindOptimal()
 	if (this->caltulateMultithread)
 	{
 		FindMultithread(0, VariantStack);
-
-		for (auto& thread : this->threadPool)
-		{
-			thread.join();
-		}
 	}
 	else
 	{
@@ -188,6 +183,8 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> var
 	auto variantVector = this->types[depth]->GetVariants();
 	unsigned short varAmount = variantVector.size();
 
+	std::vector<std::thread> ThreadPool;
+
 	for (int i = 0; i < varAmount; i++)
 	{
 		variantStack.push_back(variantVector[i]);
@@ -209,15 +206,22 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> var
 			// Children
 			if (depth == this->types.size() - 1)
 			{
-				this->threadPool.push_back(std::thread(&AlgorithmManager::CalculateCosts, this, variantStack));
+				ThreadPool.push_back(std::thread(&AlgorithmManager::CalculateCosts, this, variantStack));
 			}
 			else
 			{
-				this->threadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, depth + 1, variantStack));
+				ThreadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, depth + 1, variantStack));
 			}
 		}
 		variantStack.pop_back();
 	}
+
+	for (auto& thread : ThreadPool)
+	{
+		if(thread.joinable())
+			thread.join();
+	}
+
 }
 
 void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)

@@ -10,7 +10,7 @@ class AlgorithmManager
 {
 private:
 	std::vector<Type*> types;
-	TreeNode* treeRoot;
+	//TreeNode* treeRoot;
 
 	GraphNode *Graph_G, *Graph_H;
 	GraphNode *Graph_G_End, *Graph_H_End;
@@ -22,7 +22,6 @@ private:
 	//Multithreading
 	bool caltulateMultithread;
 	std::mutex guard;
-	std::vector<std::thread> threadPool;
 
 public:
 	AlgorithmManager();
