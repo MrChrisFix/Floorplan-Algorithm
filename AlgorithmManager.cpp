@@ -7,7 +7,6 @@ AlgorithmManager::AlgorithmManager()
 	this->Graph_H = new GraphNode(true, false);
 	this->Graph_G_End = new GraphNode(false, true);
 	this->Graph_H_End = new GraphNode(false, false);
-	//this->treeRoot = new TreeNode(nullptr);
 
 	this->bestValue = -1;
 	this->caltulateMultithread = true; //TODO: make as argument
@@ -17,13 +16,11 @@ AlgorithmManager::~AlgorithmManager()
 {
 	delete this->Graph_G;
 	delete this->Graph_H;
-	//delete this->treeRoot;
 }
 
 std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
 {
 	PopulateGraphs();
-	//CreateTree();
 	FindOptimal();
 
 	return std::pair<unsigned, std::vector<Variant*>>(this->bestValue, this->bestCombination);
@@ -117,15 +114,6 @@ void AlgorithmManager::PopulateGraphs()
 	}
 }
 
-/*
-void AlgorithmManager::CreateTree()
-{
-	std::vector<Variant*> VariantStack;
-
-	AddTreeBranch(0, VariantStack, this->treeRoot);
-}
-*/
-
 void AlgorithmManager::FindOptimal()
 {
 	std::vector<Variant*> VariantStack;
@@ -139,19 +127,6 @@ void AlgorithmManager::FindOptimal()
 		FindSinglethread(0, VariantStack);
 	}
 }
-
-/*
-std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::FindOptimal_old()
-{
-	unsigned min = -1;
-	TreeNodeLeaf* best;
-	ReadLeaf(this->treeRoot, min, best);
-	std::pair<unsigned, std::vector<Variant*>> returned;
-	returned.first = min;
-	returned.second = best->composition;
-	return returned;
-}
-*/
 
 void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> variantStack)
 {
@@ -238,49 +213,3 @@ void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
 	}
 	this->guard.unlock();
 }
-
-/*
-void AlgorithmManager::ReadLeaf(TreeNode* currentNode, unsigned &currentMin, TreeNodeLeaf* &currentBest)
-{
-	if (currentNode->branches.empty())
-	{
-		TreeNodeLeaf* leaf = (TreeNodeLeaf*)currentNode;
-		if (leaf->cost < currentMin)
-		{
-			currentMin = leaf->cost;
-			currentBest = leaf;
-		}
-	}
-	else
-	{
-		for (auto branch : currentNode->branches)
-		{
-			ReadLeaf(branch, currentMin, currentBest);
-		}
-	}
-}
-*/
-/*
-void AlgorithmManager::AddTreeBranch(unsigned int depth, std::vector<Variant*> &variantStack, TreeNode* ptr) //< first ptr is root
-{
-	for (auto variant : this->types[depth]->GetVariants())
-	{
-		variantStack.push_back(variant);
-
-		if (depth == this->types.size() - 1) //last type -> leaf
-		{
-			unsigned G_Value = this->Graph_G->calculateCost(variantStack);
-			unsigned H_Value = this->Graph_H->calculateCost(variantStack);
-			TreeNodeLeaf* leaf = new TreeNodeLeaf(ptr, G_Value * H_Value, variantStack);
-			ptr->AddLeaf(leaf);
-		}
-		else if (depth < this->types.size())
-		{
-			TreeNode* newNode = ptr->AddNewBranch();
-			AddTreeBranch(depth + 1, variantStack ,newNode); // Going deeper into the tree
-		}
-
-		variantStack.pop_back();
-	}
-}
-*/
