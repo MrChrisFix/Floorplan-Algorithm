@@ -1,0 +1,28 @@
+<?xml varsion="1.0" encoding="UTF-8"?>
+<Types>
+    <Type name="A">
+        <Variants>
+            <Variant width="1" height="3"/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="B" direction="R"/>
+            <Requirement typeName="C" direction="R"/>
+        </Requirements>
+    </Type>
+    <Type name="B">
+        <Variants>
+            <Variant width="1" height="2"/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="A" direction="L"/>
+        </Requirements>
+    </Type>
+    <Type name="C">
+        <Variants>
+            <Variant width="1" height="3"/>
+        </Variants>
+        <Requirements>
+            <Requirement typeName="A" direction="L"/>
+        </Requirements>
+    </Type>
+</Types>

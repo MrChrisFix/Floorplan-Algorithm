@@ -20,8 +20,14 @@ AlgorithmManager::~AlgorithmManager()
 
 std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
 {
+	auto start = std::chrono::system_clock::now();
 	PopulateGraphs();
+	//TODO: Adjust graphs
 	FindOptimal();
+	auto end = std::chrono::system_clock::now();
+
+
+	auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
 	return std::pair<unsigned, std::vector<Variant*>>(this->bestValue, this->bestCombination);
 }

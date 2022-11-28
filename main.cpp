@@ -6,7 +6,11 @@ int main()
 {
 	XMLFileManager A;
 
-	auto type = A.ReadFromXML("templateXML2.xml");
+	//XML - square
+	//XML2 - a more complex diagram
+	//XML3 - uncomplete connections
+
+	auto type = A.ReadFromXML("templateXML3.xml");
 
 	AlgorithmManager B;
 
