@@ -6,9 +6,17 @@ void XMLFileManager::OpenFile(std::string path)
 {
 	if (path.empty())
 	{
-		throw; //TODO: add exception
+		throw "Path is empty";
 	}
-	this->XMLFile = new rapidxml::file<>(path.c_str());
+
+	try 
+	{
+		this->XMLFile = new rapidxml::file<>(path.c_str());
+	}
+	catch (...)
+	{
+		throw "Coundn't open file";
+	}
 }
 
 XMLFileManager::XMLFileManager()
@@ -18,21 +26,102 @@ XMLFileManager::XMLFileManager()
 
 XMLFileManager::~XMLFileManager()
 {
-	delete this->XMLFile;
+	if(this->XMLFile != nullptr)
+		delete this->XMLFile;
 }
 
 void XMLFileManager::SaveToXML(std::vector<Type*> types, std::string path)
 {
+	using namespace rapidxml;
+	xml_document<> document;
+
+	//<Types>
+	xml_node<>* TypesNode = document.allocate_node(node_element, "Types");
+
+	for (auto type : types)
+	{
+		//<Type name="...">
+		xml_node <>* TypeNode = document.allocate_node(node_element, "Type");
+		xml_attribute <>* TypeName = document.allocate_attribute("name", document.allocate_string(type->GetName().c_str()));
+		TypeNode->append_attribute(TypeName);
+
+		//<Variants>
+		xml_node <>* VariantsNode = document.allocate_node(node_element, "Variants");
+
+		//<Variant width="..." height="...">
+		for (auto var : type->GetVariants())
+		{
+			xml_node <>* VariantNode = document.allocate_node(node_element, "Variant");
+			xml_attribute <>* Width = document.allocate_attribute("width", document.allocate_string(std::to_string(var->GetWidth()).c_str()));
+			xml_attribute <>* Height = document.allocate_attribute("height", document.allocate_string(std::to_string(var->GetHeight()).c_str()));
+
+			VariantNode->append_attribute(Width);
+			VariantNode->append_attribute(Height);
+			VariantsNode->append_node(VariantNode);
+		}
+
+		TypeNode->append_node(VariantsNode);
+
+		//<Requirements>
+		xml_node <>* Requirements = document.allocate_node(node_element, "Requirements");
+
+		//<Requirement typeName="..." direction="...">
+		for (auto dir : type->up)
+		{
+			xml_node <>* ReqNode = document.allocate_node(node_element, "Requirement");
+
+			xml_attribute <>* typeNameAttr = document.allocate_attribute("typeName", document.allocate_string(dir->GetName().c_str()));
+			xml_attribute <>* directionAttr = document.allocate_attribute("direction", "U");
+			ReqNode->append_attribute(typeNameAttr);
+			ReqNode->append_attribute(directionAttr);
+			Requirements->append_node(ReqNode);
+		}
+		for (auto dir : type->down)
+		{
+			xml_node <>* ReqNode = document.allocate_node(node_element, "Requirement");
+
+			xml_attribute <>* typeNameAttr = document.allocate_attribute("typeName", document.allocate_string(dir->GetName().c_str()));
+			xml_attribute <>* directionAttr = document.allocate_attribute("direction", "D");
+			ReqNode->append_attribute(typeNameAttr);
+			ReqNode->append_attribute(directionAttr);
+
+			Requirements->append_node(ReqNode);
+		}
+		for (auto dir : type->left)
+		{
+			xml_node <>* ReqNode = document.allocate_node(node_element, "Requirement");
+
+			xml_attribute <>* typeNameAttr = document.allocate_attribute("typeName", document.allocate_string(dir->GetName().c_str()));
+			xml_attribute <>* directionAttr = document.allocate_attribute("direction", "L");
+			ReqNode->append_attribute(typeNameAttr);
+			ReqNode->append_attribute(directionAttr);
+			Requirements->append_node(ReqNode);
+		}
+		for (auto dir : type->right)
+		{
+			xml_node <>* ReqNode = document.allocate_node(node_element, "Requirement");
+
+			xml_attribute <>* typeNameAttr = document.allocate_attribute("typeName", document.allocate_string(dir->GetName().c_str()));
+			xml_attribute <>* directionAttr = document.allocate_attribute("direction", "R");
+			ReqNode->append_attribute(typeNameAttr);
+			ReqNode->append_attribute(directionAttr);
+			Requirements->append_node(ReqNode);
+		}
+		TypeNode->append_node(Requirements);
+
+		TypesNode->append_node(TypeNode);
+	}
+
+	document.append_node(TypesNode);
+
 	std::ofstream file;
 	file.open(path);
 	if (!file.is_open())
 	{
-		throw;
+		throw "Couldn't open file";
 	}
-	//TODO
-
+	file << document;
 	file.close();
-
 }
 
 std::vector<Type*> XMLFileManager::ReadFromXML(std::string path)
@@ -40,21 +129,21 @@ std::vector<Type*> XMLFileManager::ReadFromXML(std::string path)
 	using namespace rapidxml;
 	std::vector<Type*> types;
 	
-	this->OpenFile(path);
 	xml_document<> document;
 	try
 	{
+		this->OpenFile(path);
 		document.parse<0>(this->XMLFile->data());
 	}
 	catch (...)
 	{
-		//TODO
+		throw;
 	}
 
 	xml_node<>* mainNode = document.first_node("Types");
 	if (mainNode->name() == 0)
 	{
-		throw; //TODO Some information
+		throw "XML node format is incorrect";
 	}
 
 	std::map <std::string,Type*> TypeByName;
@@ -87,7 +176,11 @@ std::vector<Type*> XMLFileManager::ReadFromXML(std::string path)
 			auto childTypeName = reqNode->first_attribute("typeName")->value();
 			Type* childType = TypeByName[childTypeName];
 
-			//TODO: chack if type isn't nullptr
+			//TODO: check if type isn't nullptr
+			if (childType == nullptr)
+			{
+				throw "Something went wrong. Try to start over.";
+			}
 
 			auto direction = reqNode->last_attribute("direction")->value();
 
