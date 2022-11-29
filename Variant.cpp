@@ -12,11 +12,6 @@ Variant::~Variant()
 	this->type = nullptr;
 }
 
-unsigned int Variant::GetCost()
-{
-	return this->height * this->width;
-}
-
 unsigned Variant::GetHeight()
 {
 	return this->height;

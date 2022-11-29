@@ -70,8 +70,12 @@ GraphNode::~GraphNode()
 
 void GraphNode::AddNodeToGraph(GraphNode* node)
 {
-    this->next.push_back(node);
-    node->prev.push_back(this);
+    if (std::find(this->next.begin(), this->next.end(), node) != this->next.end()) //Preventing adding the same node multiple times
+    {
+        this->next.push_back(node);
+        node->prev.push_back(this);
+    }
+
 }
 
 unsigned int GraphNode::calculateCost(std::vector<Variant*> combination) const

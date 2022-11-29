@@ -13,8 +13,6 @@ public:
 	Variant(unsigned hei, unsigned wid, Type* parentType);
 	~Variant();
 
-	unsigned int GetCost();
-
 	unsigned GetHeight();
 	unsigned GetWidth();
 	Type* GetType();
