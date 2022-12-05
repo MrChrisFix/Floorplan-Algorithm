@@ -1,4 +1,5 @@
 #include "GraphNode.h"
+#include <algorithm>
 
 unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
 {
@@ -70,7 +71,7 @@ GraphNode::~GraphNode()
 
 void GraphNode::AddNodeToGraph(GraphNode* node)
 {
-    if (std::find(this->next.begin(), this->next.end(), node) != this->next.end()) //Preventing adding the same node multiple times
+    if (std::find(this->next.begin(), this->next.end(), node) != this->next.end() || !(this->next.size() > 1) ) //Preventing adding the same node multiple times
     {
         this->next.push_back(node);
         node->prev.push_back(this);
