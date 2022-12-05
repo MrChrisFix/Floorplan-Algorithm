@@ -30,6 +30,7 @@ public:
 	void setTypes(std::vector<Type*> Types);
 
 private:
+	void FixTypeConnections();
 	void PopulateGraphs();
 	void FindOptimal();
 

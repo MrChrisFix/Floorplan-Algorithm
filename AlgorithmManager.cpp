@@ -21,6 +21,7 @@ AlgorithmManager::~AlgorithmManager()
 std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
 {
 	auto start = std::chrono::system_clock::now();
+	FixTypeConnections();
 	PopulateGraphs();
 	//TODO: Adjust graphs
 	FindOptimal();
@@ -97,6 +98,42 @@ void AlgorithmManager::Populate_H_Graph(GraphNode* currentNode)
 			Populate_H_Graph(newLeft);
 		}
 	}
+}
+
+void AlgorithmManager::FixTypeConnections()
+{
+	for (auto type : this->types)
+	{
+		Type* first, * second;
+
+		if (type->right.size() < 2) 
+			continue;
+
+		//Stack top-bottom the types on the right
+		auto& right = type->right;
+		first = right[0];
+		for (int i = 1; i < right.size(); i++)
+		{
+			second = right[i];
+			first->AddRequirement('D', second, true);
+			first = second;
+		}
+
+		if (type->down.size() < 2)
+			continue;
+
+		//Stack left-right the types on the bottom
+		auto& down = type->down;
+		first = down[0];
+		for (int i = 1; i < down.size(); i++)
+		{
+			second = down[i];
+			first->AddRequirement('R', second, true);
+			first = second;
+		}
+
+	}
+
 }
 
 void AlgorithmManager::PopulateGraphs()
