@@ -1,5 +1,4 @@
 #include "AlgorithmManager.h"
-#include "TreeNodeLeaf.h"
 
 AlgorithmManager::AlgorithmManager()
 {
@@ -23,7 +22,6 @@ std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
 	auto start = std::chrono::system_clock::now();
 	FixTypeConnections();
 	PopulateGraphs();
-	//TODO: Adjust graphs
 	FindOptimal();
 	auto end = std::chrono::system_clock::now();
 

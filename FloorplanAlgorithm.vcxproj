@@ -129,8 +129,6 @@
   <ItemGroup>
     <ClInclude Include="AlgorithmManager.h" />
     <ClInclude Include="GraphNode.h" />
-    <ClInclude Include="TreeNode.h" />
-    <ClInclude Include="TreeNodeLeaf.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Variant.h" />
     <ClInclude Include="XMLFileManager.h" />
@@ -139,8 +137,6 @@
     <ClCompile Include="AlgorithmManager.cpp" />
     <ClCompile Include="GraphNode.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TreeNode.cpp" />
-    <ClCompile Include="TreeNodeLeaf.cpp" />
     <ClCompile Include="Type.cpp" />
     <ClCompile Include="Variant.cpp" />
     <ClCompile Include="XMLFileManager.cpp" />

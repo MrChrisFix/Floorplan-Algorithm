@@ -3,7 +3,6 @@
 #include <vector>
 #include <mutex>
 #include "Type.h"
-#include "TreeNode.h"
 #include "GraphNode.h"
 
 class AlgorithmManager
