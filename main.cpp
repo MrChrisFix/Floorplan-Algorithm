@@ -31,6 +31,5 @@ int main()
 
 	B.setTypes(type);
 	auto value = B.StartCalculations();
-	std::cout << value.first;
 	return 0;
 }

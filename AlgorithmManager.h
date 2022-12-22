@@ -4,6 +4,7 @@
 #include <mutex>
 #include "Type.h"
 #include "GraphNode.h"
+#include "ResultStruct.h"
 
 class AlgorithmManager
 {
@@ -15,6 +16,8 @@ private:
 
 	//Calc
 	unsigned bestValue;
+	unsigned bestWidth;
+	unsigned bestHeight;
 	std::vector<Variant*> bestCombination;
 
 	//Multithreading
@@ -25,7 +28,7 @@ public:
 	AlgorithmManager();
 	~AlgorithmManager();
 
-	std::pair<unsigned,std::vector<Variant*>> StartCalculations();
+	ResultStruct StartCalculations();
 	void setTypes(std::vector<Type*> Types);
 
 private:

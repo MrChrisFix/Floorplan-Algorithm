@@ -8,6 +8,8 @@ AlgorithmManager::AlgorithmManager()
 	this->Graph_H_End = new GraphNode(false, false);
 
 	this->bestValue = -1;
+	this->bestWidth = -1;
+	this->bestHeight = -1;
 	this->caltulateMultithread = true; //TODO: make as argument
 }
 
@@ -17,7 +19,7 @@ AlgorithmManager::~AlgorithmManager()
 	delete this->Graph_H;
 }
 
-std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
+ResultStruct AlgorithmManager::StartCalculations()
 {
 	auto start = std::chrono::system_clock::now();
 	FixTypeConnections();
@@ -28,7 +30,13 @@ std::pair<unsigned, std::vector<Variant*>> AlgorithmManager::StartCalculations()
 
 	auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-	return std::pair<unsigned, std::vector<Variant*>>(this->bestValue, this->bestCombination);
+	ResultStruct results;
+	results.bestHeight = this->bestHeight;
+	results.bestWidth = this->bestWidth;
+	results.bestCombination = this->bestCombination;
+	results.time_microsec = elapsed_us;
+
+	return results;
 }
 
 void AlgorithmManager::setTypes(std::vector<Type*> Types)

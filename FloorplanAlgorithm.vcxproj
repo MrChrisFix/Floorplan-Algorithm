@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="AlgorithmManager.h" />
     <ClInclude Include="GraphNode.h" />
+    <ClInclude Include="ResultStruct.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Variant.h" />
     <ClInclude Include="XMLFileManager.h" />
