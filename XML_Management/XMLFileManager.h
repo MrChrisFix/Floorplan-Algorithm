@@ -4,7 +4,7 @@
 #include "rapidxml-1.13/rapidxml_print.hpp"
 #include "rapidxml-1.13/rapidxml_utils.hpp"
 #include <vector>
-#include "Type.h"
+#include "../Algorithm/Type.h"
 
 class XMLFileManager
 {

@@ -1,6 +1,6 @@
-#include "XMLFileManager.h"
 #include <iostream>
-#include "AlgorithmManager.h"
+#include "Algorithm/AlgorithmManager.h"
+#include "XML_Management/XMLFileManager.h"
 
 int main()
 {
