@@ -50,7 +50,13 @@ public:
 	 * @param varHeight The height of the new Variant
 	*/
 	void AddVariant(unsigned varWidth, unsigned varHeight);
-	 
+
+	/**
+	 * Removes the Variant from the vector
+	 * @param variant The variant that should be removed
+	 */
+	void RemoveVariant(Variant* variant);
+
 	/**
 	 * Adds a requirement to the type invoked on and the type given
 	 * @param side The side of the requirement. 
@@ -59,5 +65,12 @@ public:
 	 * @param onBoth The requirement should be added on the invoked Type and given Type
 	*/
 	void AddRequirement(char side, Type* type, bool onBoth = true);
+
+	/**
+	 * Removes the given requirement from requirements vector
+	 * @param toRemove The type which should be removed
+	 * @param onBoth Should the other requirement delete us
+	 */
+	void RemoveRequirement(Type* toRemove, bool onBoth = false);
 };
 

@@ -14,6 +14,9 @@ public:
 	~Variant();
 
 	unsigned GetHeight();
+	void SetHeight(unsigned hei);
 	unsigned GetWidth();
+	void SetWidth(unsigned wid);
+
 	Type* GetType();
 };

@@ -17,9 +17,19 @@ unsigned Variant::GetHeight()
 	return this->height;
 }
 
+void Variant::SetHeight(unsigned hei)
+{
+	this->height = hei;
+}
+
 unsigned Variant::GetWidth()
 {
 	return this->width;
+}
+
+void Variant::SetWidth(unsigned wid)
+{
+	this->width = wid;
 }
 
 Type* Variant::GetType()

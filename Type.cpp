@@ -41,6 +41,15 @@ void Type::AddVariant(unsigned varWidth, unsigned varHeight)
 	this->variants.push_back(var);
 }
 
+void Type::RemoveVariant(Variant* variant)
+{
+	auto it = std::find(this->variants.begin(), this->variants.end(), variant);
+	if (it != this->variants.end())
+	{
+		this->variants.erase(it);
+	}
+}
+
 void Type::AddRequirement(char side, Type* type, bool onBoth)
 {
 	switch (side)
@@ -73,4 +82,51 @@ void Type::AddRequirement(char side, Type* type, bool onBoth)
 			break;
 	}
 
+}
+
+void Type::RemoveRequirement(Type* toRemove, bool onBoth)
+{
+	auto it = std::find(up.begin(), up.end(), toRemove);
+	if (it != up.end())
+	{
+		up.erase(it);
+		if (onBoth)
+		{
+			toRemove->RemoveRequirement(this, false);
+		}
+		return;
+	}
+
+	it = std::find(down.begin(), down.end(), toRemove);
+	if (it != down.end())
+	{
+		down.erase(it);
+		if (onBoth)
+		{
+			toRemove->RemoveRequirement(this, false);
+		}
+		return;
+	}
+
+	it = std::find(left.begin(), left.end(), toRemove);
+	if (it != left.end())
+	{
+		left.erase(it);
+		if (onBoth)
+		{
+			toRemove->RemoveRequirement(this, false);
+		}
+		return;
+	}
+
+	it = std::find(right.begin(), right.end(), toRemove);
+	if (it != right.end())
+	{
+		right.erase(it);
+		if (onBoth)
+		{
+			toRemove->RemoveRequirement(this, false);
+		}
+		return;
+	}
 }
