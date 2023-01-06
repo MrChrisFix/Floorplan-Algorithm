@@ -10,7 +10,7 @@ AlgorithmManager::AlgorithmManager()
 	this->bestValue = -1;
 	this->bestWidth = -1;
 	this->bestHeight = -1;
-	this->caltulateMultithread = true; //TODO: make as argument
+	this->caltulateMultithread = false; //TODO: make as argument
 }
 
 AlgorithmManager::~AlgorithmManager()
@@ -23,11 +23,15 @@ ResultStruct AlgorithmManager::StartCalculations()
 {
 	auto start = std::chrono::system_clock::now();
 	FixTypeConnections();
+	auto fix = std::chrono::system_clock::now();
 	PopulateGraphs();
+	auto pop = std::chrono::system_clock::now();
 	FindOptimal();
 	auto end = std::chrono::system_clock::now();
 
-
+	auto fix_us = std::chrono::duration_cast<std::chrono::microseconds>(fix - start).count();
+	auto pop_us = std::chrono::duration_cast<std::chrono::microseconds>(pop - fix).count();
+	auto otp_us = std::chrono::duration_cast<std::chrono::microseconds>(end - pop).count();
 	auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
 	ResultStruct results;

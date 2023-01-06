@@ -2,8 +2,18 @@
 #include "Algorithm/AlgorithmManager.h"
 #include "XML_Management/XMLFileManager.h"
 
+#include "Testing/TimeTester.h"
+
 int main()
 {
+	TimeTester tester;
+	for(int i=1; i< 5; i++)
+		tester.ConstTypesMultipleVariants(i, 20, 60);
+	/*for(int i=1; i<5; i++)
+		tester.MultipleTypesConstVaraint(5, 15, i);*/
+
+	return 0;
+
 	XMLFileManager A;
 
 	//XML - square
@@ -13,7 +23,7 @@ int main()
 	std::vector<Type*> type;
 	try
 	{
-		type = A.ReadFromXML("templateXML.xml");
+		type = A.ReadFromXML("Big20Types.xml");
 		//A.SaveToXML(type, "test.xml");
 	}
 	catch (const char* message)
