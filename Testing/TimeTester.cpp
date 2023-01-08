@@ -71,7 +71,7 @@ void TimeTester::MultipleTypesConstVaraint(int typesMin, int typesMax, int varia
 
 
 	AlgorithmManager manager;
-	for (int currentTypeAmount = typesMin; currentTypeAmount < typesMax; currentTypeAmount++)
+	for (int currentTypeAmount = typesMin; currentTypeAmount <= typesMax; currentTypeAmount++)
 	{
 		manager.setTypes(types);
 		ResultStruct result = manager.StartCalculations();
@@ -111,7 +111,7 @@ void TimeTester::ConstTypesMultipleVariants(int typesAmount, int variantsMin, in
 
 	
 	AlgorithmManager manager;
-	for (int currentVarAmount = variantsMin; currentVarAmount < variantsMax; currentVarAmount++)
+	for (int currentVarAmount = variantsMin; currentVarAmount <= variantsMax; currentVarAmount++)
 	{
 		manager.setTypes(types);
 		ResultStruct result = manager.StartCalculations();

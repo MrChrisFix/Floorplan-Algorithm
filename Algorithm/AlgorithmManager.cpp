@@ -187,13 +187,25 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> va
 	{
 		variantStack.push_back(variant);
 
+		unsigned G_Value = this->Graph_G->calculateCost(variantStack);
+		unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+		
+		if (G_Value * H_Value >= this->bestValue)
+		{
+			variantStack.pop_back();
+			continue;
+		}
+
 		if (depth == this->types.size() - 1)
 		{
-			unsigned G_Value = this->Graph_G->calculateCost(variantStack);
-			unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+			//unsigned G_Value = this->Graph_G->calculateCost(variantStack);
+			//unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+
 			if (G_Value * H_Value < this->bestValue)
 			{
 				this->bestValue = G_Value * H_Value;
+				this->bestHeight = G_Value;
+				this->bestWidth = H_Value;
 				this->bestCombination = variantStack;
 			}
 		}
