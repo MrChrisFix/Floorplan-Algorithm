@@ -1,7 +1,6 @@
 #include "TimeTester.h"
-#include "../Algorithm/Type.h"
-#include "../Algorithm/Variant.h"
 #include <ctime>
+#include "../Algorithm/Variant.h"
 #include "../Algorithm/AlgorithmManager.h"
 #include <chrono>
 #include <sstream>
@@ -55,19 +54,7 @@ void TimeTester::MultipleTypesConstVaraint(int typesMin, int typesMax, int varia
 	std::vector<Type*> types;
 	std::vector<std::pair<int, long long>> times;
 
-	std::srand(time(NULL));
-
-	for (int i = 0; i < typesMin; i++)
-	{
-		Type* newType = new Type(std::to_string(i));
-
-		for (int j = 0; j < variantsAmount; j++)
-		{
-			newType->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
-		}
-
-		types.push_back(newType);
-	}
+	types = TypeVectorCreator(typesMin, variantsAmount, false);
 
 
 	AlgorithmManager manager;
@@ -95,20 +82,7 @@ void TimeTester::ConstTypesMultipleVariants(int typesAmount, int variantsMin, in
 	std::vector<Type*> types;
 	std::vector<std::pair<int, long long>> times;
 
-	std::srand(time(NULL));
-
-	for (int i = 0; i < typesAmount; i++)
-	{
-		Type* newType = new Type(std::to_string(i));
-
-		for (int j = 0; j < variantsMin; j++)
-		{
-			newType->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
-		}
-
-		types.push_back(newType);
-	}
-
+	types = TypeVectorCreator(typesAmount, variantsMin, false);
 	
 	AlgorithmManager manager;
 	for (int currentVarAmount = variantsMin; currentVarAmount <= variantsMax; currentVarAmount++)
@@ -124,4 +98,47 @@ void TimeTester::ConstTypesMultipleVariants(int typesAmount, int variantsMin, in
 
 	this->saveCSV(times, false, typesAmount);
 
+}
+
+std::vector<Type*> TimeTester::TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements)
+{
+	std::vector<Type*> types;
+
+	std::srand(time(nullptr));
+
+	for (int i = 0; i < typesAmount; i++)
+	{
+		Type* newType = new Type(std::to_string(i));
+		for (int j = 0; j < variantsAmount; j++)
+		{
+			newType->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
+		}
+		types.push_back(newType);
+	}
+
+	if (withRequirements)
+	{
+		int i = 0;
+		for (auto& type : types)
+		{
+			int typeId;
+			do
+			{
+				typeId = rand() % typesAmount;
+			} while (typeId == i);
+
+			auto sasiad = types[typeId];
+
+			char side;
+			if (typeId % 2 == 0) side = 'R';
+			else if (typeId % 3 == 0) side = 'D';
+			else if (typeId % 5 == 0) side = 'L';
+			else side = 'U';
+
+			type->AddRequirement(side, sasiad, true);
+			i++;
+		}
+	}
+
+	return types;
 }
