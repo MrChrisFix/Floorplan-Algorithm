@@ -1,5 +1,7 @@
 #include "Variant.h"
 
+namespace FPA {
+
 Variant::Variant(unsigned hei, unsigned wid, Type* parentType)
 {
 	this->height = hei;
@@ -36,3 +38,5 @@ Type* Variant::GetType()
 {
 	return this->type;
 }
+
+} //namespace FPA

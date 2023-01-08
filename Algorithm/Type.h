@@ -3,6 +3,8 @@
 #include "Variant.h"
 #include <string>
 
+namespace FPA {
+
 class Type
 {
 private:
@@ -74,3 +76,4 @@ public:
 	void RemoveRequirement(Type* toRemove, bool onBoth = false);
 };
 
+} //namespace FPA

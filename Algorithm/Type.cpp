@@ -1,5 +1,7 @@
 #include "Type.h"
 
+namespace FPA {
+
 Type::Type(std::string typeName)
 {
 	this->name = typeName;
@@ -130,3 +132,5 @@ void Type::RemoveRequirement(Type* toRemove, bool onBoth)
 		return;
 	}
 }
+
+} //namespace FPA

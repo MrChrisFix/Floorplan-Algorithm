@@ -1,5 +1,7 @@
 #pragma once
 
+namespace FPA {
+
 class Type; //<- avoiding a #include deadlock
 
 class Variant
@@ -53,3 +55,5 @@ public:
 	*/
 	Type* GetType();
 };
+
+} //namespace FPA

@@ -6,6 +6,8 @@
 #include "GraphNode.h"
 #include "ResultStruct.h"
 
+namespace FPA {
+
 class AlgorithmManager
 {
 private:
@@ -44,3 +46,4 @@ private:
 	void Populate_H_Graph(GraphNode* currentNode);
 };
 
+} //namespace FPA

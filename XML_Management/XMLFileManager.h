@@ -33,13 +33,13 @@ public:
 	 * @param path Filepath to the xml with types
 	 * @return A vector with Types (including variants and requirements)
 	*/
-	std::vector<Type*> ReadFromXML(std::string path);
+	std::vector<FPA::Type*> ReadFromXML(std::string path);
 
 	/**
 	 * Saves type vector to a xml
 	 * @param types The vector of Types that should be saved
 	 * @param path Filepath where the xml should be saved
 	*/
-	void SaveToXML(std::vector<Type*> types, std::string path);
+	void SaveToXML(std::vector<FPA::Type*> types, std::string path);
 };
 

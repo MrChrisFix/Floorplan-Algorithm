@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "../Algorithm/Type.h"
+
 class TimeTester
 {
 private:
@@ -15,7 +16,7 @@ public:
 
 	void ConstTypesMultipleVariants(int typesAmount, int variantsMin, int variantsMax);
 
-	std::vector<Type*> TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements);
+	std::vector<FPA::Type*> TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements);
 
 };
 

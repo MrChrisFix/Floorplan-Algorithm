@@ -2,6 +2,8 @@
 #include <vector>
 #include "Type.h"
 
+namespace FPA {
+
 /**
  * The graphs G and H are used to calculate the height and width costs respectivly. 
 */
@@ -77,3 +79,4 @@ private:
 	void removeChildNode(GraphNode* node);
 };
 
+} //namespace FPA

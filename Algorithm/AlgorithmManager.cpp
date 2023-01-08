@@ -1,5 +1,7 @@
 #include "AlgorithmManager.h"
 
+namespace FPA {
+
 AlgorithmManager::AlgorithmManager()
 {
 	this->Graph_G = new GraphNode(true, true);
@@ -278,3 +280,5 @@ void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
 	}
 	this->guard.unlock();
 }
+
+} //namespace FPA

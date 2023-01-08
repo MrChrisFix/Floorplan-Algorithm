@@ -8,6 +8,8 @@
 
 #pragma warning( disable : 4996)
 
+using namespace FPA;
+
 void TimeTester::saveCSV(std::vector<std::pair<int, long long>> times, bool multipleTypes, int constAmount)
 {
 	std::string fileName = "";

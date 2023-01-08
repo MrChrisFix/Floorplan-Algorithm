@@ -1,6 +1,8 @@
 #include "GraphNode.h"
 #include <algorithm>
 
+namespace FPA {
+
 unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
 {
     if (this->isEnd)
@@ -104,3 +106,6 @@ Type* GraphNode::GetType()
 {
     return this->type;
 }
+
+
+} //namespace FPA
