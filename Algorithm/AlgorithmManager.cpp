@@ -13,7 +13,8 @@ AlgorithmManager::AlgorithmManager()
 	this->bestWidth = -1;
 	this->bestHeight = -1;
 	this->caltulateMultithread = false;
-	this->threadNum = 1;
+	this->threadNum = 0;
+	this->avaliableThreads = 0;
 }
 
 AlgorithmManager::~AlgorithmManager()
@@ -29,7 +30,7 @@ ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool mult
 	this->avaliableThreads = threads;
 
 	auto start = std::chrono::system_clock::now();
-	FixTypeConnections();
+	//FixTypeConnections();
 	auto fix = std::chrono::system_clock::now();
 	PopulateGraphs();
 	auto pop = std::chrono::system_clock::now();

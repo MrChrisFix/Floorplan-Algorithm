@@ -64,6 +64,11 @@ GraphNode::~GraphNode()
         {
             delete node;
         }
+        else //Remove child connection to me
+        {
+            auto it = std::find(node->prev.begin(), node->prev.end(), this);
+            node->prev.erase(it);
+        }
     }
 
     this->prev.clear();
@@ -73,7 +78,15 @@ GraphNode::~GraphNode()
 
 void GraphNode::AddNodeToGraph(GraphNode* node)
 {
-    if (std::find(this->next.begin(), this->next.end(), node) != this->next.end() || !(this->next.size() > 1) ) //Preventing adding the same node multiple times
+    bool found = false;
+    for(auto& nod : this->next)
+        if (nod == node)
+        {
+            found = true;
+            break;
+        }
+
+    if (!found) //Preventing adding the same node multiple times
     {
         this->next.push_back(node);
         node->prev.push_back(this);
@@ -106,6 +119,5 @@ Type* GraphNode::GetType()
 {
     return this->type;
 }
-
 
 } //namespace FPA
