@@ -63,7 +63,7 @@ void TimeTester::MultipleTypesConstVaraint(int typesMin, int typesMax, int varia
 	for (int currentTypeAmount = typesMin; currentTypeAmount <= typesMax; currentTypeAmount++)
 	{
 		manager.setTypes(types);
-		ResultStruct result = manager.StartCalculations();
+		ResultStruct result = manager.StartCalculations(1, false);
 
 		times.push_back(std::pair<int, long long>(currentTypeAmount, result.time_microsec));
 
@@ -90,7 +90,7 @@ void TimeTester::ConstTypesMultipleVariants(int typesAmount, int variantsMin, in
 	for (int currentVarAmount = variantsMin; currentVarAmount <= variantsMax; currentVarAmount++)
 	{
 		manager.setTypes(types);
-		ResultStruct result = manager.StartCalculations();
+		ResultStruct result = manager.StartCalculations(1, false);
 
 		times.push_back(std::pair<int, long long>(currentVarAmount, result.time_microsec));
 
@@ -136,7 +136,7 @@ std::vector<Type*> TimeTester::TypeVectorCreator(int typesAmount, int variantsAm
 			else if (typeId % 3 == 0) side = 'D';
 			else if (typeId % 5 == 0) side = 'L';
 			else side = 'U';
-
+			type->RemoveRequirement(sasiad, true); //A fix if the element is already a neighbour
 			type->AddRequirement(side, sasiad, true);
 			i++;
 		}

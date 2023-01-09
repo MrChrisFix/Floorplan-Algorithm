@@ -12,7 +12,8 @@ AlgorithmManager::AlgorithmManager()
 	this->bestValue = -1;
 	this->bestWidth = -1;
 	this->bestHeight = -1;
-	this->caltulateMultithread = false; //TODO: make as argument
+	this->caltulateMultithread = false;
+	this->threadNum = 1;
 }
 
 AlgorithmManager::~AlgorithmManager()
@@ -21,8 +22,12 @@ AlgorithmManager::~AlgorithmManager()
 	delete this->Graph_H;
 }
 
-ResultStruct AlgorithmManager::StartCalculations()
+ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool multiThread)
 {
+	this->caltulateMultithread = multiThread;
+	this->threadNum = threads;
+	this->avaliableThreads = threads;
+
 	auto start = std::chrono::system_clock::now();
 	FixTypeConnections();
 	auto fix = std::chrono::system_clock::now();
@@ -171,14 +176,13 @@ void AlgorithmManager::PopulateGraphs()
 
 void AlgorithmManager::FindOptimal()
 {
-	std::vector<Variant*> VariantStack;
-
 	if (this->caltulateMultithread)
 	{
-		FindMultithread(0, VariantStack);
+		ManageThreads();
 	}
 	else
 	{
+		std::vector<Variant*> VariantStack;
 		FindSinglethread(0, VariantStack);
 	}
 }
@@ -191,7 +195,6 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> va
 
 		unsigned G_Value = this->Graph_G->calculateCost(variantStack);
 		unsigned H_Value = this->Graph_H->calculateCost(variantStack);
-		
 		if (G_Value * H_Value >= this->bestValue)
 		{
 			variantStack.pop_back();
@@ -222,48 +225,81 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> va
 
 void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> variantStack)
 {
-	auto variantVector = this->types[depth]->GetVariants();
-	unsigned short varAmount = variantVector.size();
-
-	std::vector<std::thread> ThreadPool;
-
-	for (int i = 0; i < varAmount; i++)
+	for (auto variant : this->types[depth]->GetVariants())
 	{
-		variantStack.push_back(variantVector[i]);
+		variantStack.push_back(variant);
 
-		if (i == varAmount - 1)
+		unsigned G_Value = this->Graph_G->calculateCost(variantStack);
+		unsigned H_Value = this->Graph_H->calculateCost(variantStack);
+
+		if (G_Value * H_Value >= this->bestValue)
 		{
-			// Parent
-			if (depth == this->types.size() - 1)
-			{
-				CalculateCosts(variantStack);
-			}
-			else
-			{
-				FindMultithread(depth + 1, variantStack);
-			}
+			variantStack.pop_back();
+			continue;
 		}
-		else
+
+
+		if (depth == this->types.size() - 1)
 		{
-			// Children
-			if (depth == this->types.size() - 1)
+			CalculateCosts(variantStack);
+		}
+		else if (depth < this->types.size())
+		{
+			this->threadAmountGuard.lock();
+			if (this->avaliableThreads > 0)
 			{
-				ThreadPool.push_back(std::thread(&AlgorithmManager::CalculateCosts, this, variantStack));
+				this->ThreadPool.push_back(
+					std::async(
+						std::launch::async, 
+						[this, depth, variantStack] {this->FindMultithread(depth+1, variantStack);}
+					)
+				);
+				avaliableThreads--;
+				this->threadAmountGuard.unlock();
+				variantStack.pop_back();
+				continue;
 			}
 			else
 			{
-				ThreadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, depth + 1, variantStack));
+				this->threadAmountGuard.unlock();
+				FindMultithread(depth + 1, variantStack); // Going deeper into the "tree"
 			}
 		}
 		variantStack.pop_back();
 	}
+}
 
-	for (auto& thread : ThreadPool)
+void AlgorithmManager::ManageThreads()
+{
+	using namespace std::chrono_literals;
+
+	std::vector<Variant*> VariantStack;
+	this->ThreadPool.push_back(std::async(std::launch::async, [this, VariantStack] {this->FindMultithread(0, VariantStack);}));
+
+	this->avaliableThreads--;
+
+	while (ThreadPool.size() > 0 && avaliableThreads < threadNum)
 	{
-		if(thread.joinable())
-			thread.join();
+		for (int i = 0; i < ThreadPool.size(); i++)
+		{
+			std::future_status status;
+			try {
+				status = ThreadPool[i].wait_for(0ms);
+			}
+			catch (std::future_error Ex)
+			{
+				continue;
+			}
+			if (status == std::future_status::ready)
+			{
+				this->threadAmountGuard.lock();
+				avaliableThreads++;
+				ThreadPool.erase(ThreadPool.begin() + i);
+				i--;
+				this->threadAmountGuard.unlock();
+			}
+		}
 	}
-
 }
 
 void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
@@ -272,13 +308,16 @@ void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
 	unsigned H_Value = this->Graph_H->calculateCost(variantStack);
 	auto value = G_Value * H_Value;
 
-	this->guard.lock();
+	std::unique_lock lc(this->guard);
+	//this->guard.lock();
 	if (this->bestValue > value)
 	{
 		this->bestValue = value;
+		this->bestHeight = G_Value;
+		this->bestWidth = H_Value;
 		this->bestCombination = variantStack;
 	}
-	this->guard.unlock();
+	//this->guard.unlock();
 }
 
 } //namespace FPA
