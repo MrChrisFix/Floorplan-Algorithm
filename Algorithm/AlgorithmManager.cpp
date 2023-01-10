@@ -14,7 +14,7 @@ AlgorithmManager::AlgorithmManager()
 	this->bestHeight = -1;
 	this->caltulateMultithread = false;
 	this->threadNum = 0;
-	this->avaliableThreads = 0;
+	this->awaliableBufferSpace = 0;
 }
 
 AlgorithmManager::~AlgorithmManager()
@@ -27,7 +27,7 @@ ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool mult
 {
 	this->caltulateMultithread = multiThread;
 	this->threadNum = threads;
-	this->avaliableThreads = threads;
+	this->awaliableBufferSpace = threads;
 
 	auto start = std::chrono::system_clock::now();
 	//FixTypeConnections();
@@ -246,23 +246,25 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> var
 		}
 		else if (depth < this->types.size())
 		{
-			this->threadAmountGuard.lock();
-			if (this->avaliableThreads > 0)
+			this->bufferSizeGuard.lock();
+			if (this->awaliableBufferSpace > 0)
 			{
-				this->ThreadPool.push_back(
+				/*this->ThreadPool.push_back(
 					std::async(
 						std::launch::async, 
 						[this, depth, variantStack] {this->FindMultithread(depth+1, variantStack);}
 					)
-				);
-				avaliableThreads--;
-				this->threadAmountGuard.unlock();
+				);*/
+				//this->ThreadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, depth + 1, variantStack));
+				awaliableBufferSpace--;
+				this->WorkToDo.push_back(std::pair<int, std::vector<Variant*>>(depth+1, variantStack));
+				this->bufferSizeGuard.unlock();
 				variantStack.pop_back();
 				continue;
 			}
 			else
 			{
-				this->threadAmountGuard.unlock();
+				this->bufferSizeGuard.unlock();
 				FindMultithread(depth + 1, variantStack); // Going deeper into the "tree"
 			}
 		}
@@ -274,16 +276,38 @@ void AlgorithmManager::ManageThreads()
 {
 	using namespace std::chrono_literals;
 
-	std::vector<Variant*> VariantStack;
-	this->ThreadPool.push_back(std::async(std::launch::async, [this, VariantStack] {this->FindMultithread(0, VariantStack);}));
+	std::vector<std::shared_future<void>> ThreadPool;
+	short avaliableThreads = threadNum;
 
-	this->avaliableThreads--;
+	std::vector<Variant*> VariantStack;
+	ThreadPool.push_back(std::async(std::launch::async, [this, VariantStack] {this->FindMultithread(0, VariantStack);}));
+	//this->ThreadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, 0, VariantStack));
+
+	avaliableThreads--;
 
 	while (ThreadPool.size() > 0 && avaliableThreads < threadNum)
 	{
+		if (WorkToDo.size() > 0 && avaliableThreads > 0)
+		{
+			int depth = WorkToDo.front().first;
+			auto& stack = WorkToDo.front().second;
+
+			ThreadPool.push_back(
+				std::async(
+					std::launch::async, [this, depth, stack] {this->FindMultithread(depth, stack); }));
+			//this->ThreadPool.push_back(std::thread(&AlgorithmManager::FindMultithread, this, WorkToDo.front().first, WorkToDo.front().second));
+			WorkToDo.pop_front();
+			avaliableThreads--;
+
+			this->bufferSizeGuard.lock();
+			this->awaliableBufferSpace++;
+			this->bufferSizeGuard.unlock();
+		}
+
 		for (int i = 0; i < ThreadPool.size(); i++)
 		{
 			std::future_status status;
+
 			try {
 				status = ThreadPool[i].wait_for(0ms);
 			}
@@ -293,12 +317,22 @@ void AlgorithmManager::ManageThreads()
 			}
 			if (status == std::future_status::ready)
 			{
-				this->threadAmountGuard.lock();
+				ThreadPool[i].get();
 				avaliableThreads++;
 				ThreadPool.erase(ThreadPool.begin() + i);
-				i--;
-				this->threadAmountGuard.unlock();
+				break;
 			}
+
+			//if (ThreadPool[i].joinable())
+			//{
+			//	ThreadPool[i].join();
+			//	//this->threadAmountGuard.lock();
+			//	avaliableThreads++;
+			//	ThreadPool.erase(ThreadPool.begin() + i);
+			//	//this->threadAmountGuard.unlock();
+			//	break;
+			//}
+
 		}
 	}
 }
@@ -309,8 +343,8 @@ void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
 	unsigned H_Value = this->Graph_H->calculateCost(variantStack);
 	auto value = G_Value * H_Value;
 
-	std::unique_lock lc(this->guard);
-	//this->guard.lock();
+	//std::unique_lock lc(this->guard);
+	this->guard.lock();
 	if (this->bestValue > value)
 	{
 		this->bestValue = value;
@@ -318,7 +352,7 @@ void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
 		this->bestWidth = H_Value;
 		this->bestCombination = variantStack;
 	}
-	//this->guard.unlock();
+	this->guard.unlock();
 }
 
 } //namespace FPA

@@ -7,6 +7,7 @@
 #include "ResultStruct.h"
 #include <future>
 #include <chrono>
+#include <deque>
 
 namespace FPA {
 
@@ -25,13 +26,14 @@ private:
 	std::vector<Variant*> bestCombination;
 
 	//Multithreading
-	unsigned int threadNum;
-	std::vector<std::future<void>> ThreadPool;
-
+	short threadNum;
+	int awaliableBufferSpace;
 	bool caltulateMultithread;
-	unsigned avaliableThreads;
-	std::mutex threadAmountGuard;
+	std::mutex bufferSizeGuard;
 	std::mutex guard;
+
+public:
+	std::deque<std::pair<int, std::vector<Variant*>>> WorkToDo;
 
 public:
 	AlgorithmManager();
