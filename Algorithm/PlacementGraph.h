@@ -1,6 +1,7 @@
 #pragma once
 #include "GraphNode.h"
 #include <map>
+#include "VariantRectangle.h"
 
 namespace FPA {
 
@@ -11,6 +12,8 @@ private:
 
 	std::map<Type*, GraphNode*> TypeLookup;
 
+	unsigned calculateGGraph(std::map<Type*, VariantRectangle*> &plane);
+	unsigned calculateHGraph(std::map<Type*, VariantRectangle*> &plane);
 
 public:
 	PlacementGraph();
@@ -18,8 +21,9 @@ public:
 
 	void CreateGraph(std::vector<Type*> types);
 
-	std::pair<unsigned, unsigned> CalculateCost(std::vector<Variant*> configuration); //WARNING: first is G, second is H
+	std::pair<unsigned, unsigned> CalculateCost(std::vector<Variant*> configuration);
 
+	std::map<Type*, VariantRectangle*> CreateAndPlaceRectangles(std::vector<Variant*> configuration);
 };
 
 } //namespace FPA

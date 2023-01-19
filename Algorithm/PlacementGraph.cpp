@@ -20,6 +20,41 @@ PlacementGraph::~PlacementGraph()
 		delete H_end;
 }
 
+unsigned PlacementGraph::calculateGGraph(std::map<Type*, VariantRectangle*>& plane)
+{
+	int Gmin = INT32_MAX, Gmax = 0;
+
+	for (auto& starter : G_start->down)
+	{
+		if (plane[starter->GetType()]->TopLeft().Y < Gmin)
+			Gmin = plane[starter->type]->TopLeft().Y;
+	}
+
+	for (auto& ender : G_end->up)
+	{
+		if (plane[ender->GetType()]->BottomLeft().Y > Gmax)
+			Gmax = plane[ender->GetType()]->BottomLeft().Y;
+	}
+	return Gmax - Gmin;
+}
+unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& plane)
+{
+	int Hmin = INT32_MAX, Hmax = 0;
+
+	for (auto& starter : H_start->right)
+	{
+		if (plane[starter->GetType()]->TopLeft().X < Hmin)
+			Hmin = plane[starter->type]->TopLeft().X;
+	}
+
+	for (auto& ender : H_end->left)
+	{
+		if (plane[ender->GetType()]->TopRight().X > Hmax)
+			Hmax = plane[ender->GetType()]->TopRight().X;
+	}
+	return Hmax - Hmin;
+}
+
 void PlacementGraph::CreateGraph(std::vector<Type*> types)
 {
 	if (types.empty()) 
@@ -78,6 +113,29 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 }
 std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::vector<Variant*> configuration)
 {
-	return std::pair<unsigned, unsigned>(-1,-1);
+	// Steps:
+	// 1. Create plane of rectangles and place them correctly
+	// 2. Calculate 'G graph'
+	// 3. Calculate 'H graph'
+
+	// I think calculating the graphs will be super easy.
+	// E.g. for the H graph just check which element is the most left by comparing element from the 'right' vector of H_start
+	// and which element is the most right by comparing elements from the 'left' vector of H_end
+
+	std::map<Type*, VariantRectangle*> rectanglePlane = this->CreateAndPlaceRectangles(configuration); //<Todo
+
+	auto G = this->calculateGGraph(rectanglePlane);
+	auto H = this->calculateHGraph(rectanglePlane);
+
+	return std::pair<unsigned, unsigned>(G, H); //G, H
+}
+std::map<Type*, VariantRectangle*> PlacementGraph::CreateAndPlaceRectangles(std::vector<Variant*> configuration)
+{
+	if (G_start == nullptr)
+		throw "Uninitialized graph";
+
+	//TODO
+
+	return std::map<Type*, VariantRectangle*>();
 }
 } //namespace FPA

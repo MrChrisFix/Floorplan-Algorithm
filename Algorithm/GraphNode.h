@@ -9,17 +9,18 @@ namespace FPA {
 */
 class GraphNode
 {
+	friend class PlacementGraph;
+
 private:
-	std::vector<GraphNode*> up;		///Vector with the nodes that are to up
+	std::vector<GraphNode*> up;		///Vector with the nodes that are up
 	std::vector<GraphNode*> left;	///Vector with the nodes that are to the left
-	std::vector<GraphNode*> down;	///Vector with the nodes that are to down(G)
-	std::vector<GraphNode*> right;	///Vector with the nodes that are to the right(H)
+	std::vector<GraphNode*> down;	///Vector with the nodes that are down
+	std::vector<GraphNode*> right;	///Vector with the nodes that are to the right
 
 	Type* type;						///The type the node is representing
 
 	bool isRoot;					///Indication if the node is the root node
 	bool isEnd;						///Indication if the node is the last node (most left in H and most down in G)
-	//bool calcHeight;//useless?				///Which attribute (height or width) should be used for calculations
 
 public:
 	/**
@@ -67,11 +68,6 @@ private:
 	 * @return The maximal cost of the configuration (height or width)
 	*/
 	unsigned GoThroughBranch(std::vector<Variant*>& combination) const;
-	/**
-	 * Private method used to remove the given node from the 'next' vector. It's used in the destructor.
-	 * @param node The node to remove
-	*/
-	//void removeChildNode(GraphNode* node);
 
 	std::vector<GraphNode*> GetVectorBySide(SIDE side);
 	std::vector<GraphNode*> GetVectorByOppsiteSide(SIDE side);

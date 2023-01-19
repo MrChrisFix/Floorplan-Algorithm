@@ -1,20 +1,11 @@
 #include "VariantRectangle.h"
 namespace FPA {
 
-VariantRectangle::VariantRectangle(Variant* variant) : _topLeft(0,0)
-{
-	this->_variant = variant;
-}
+VariantRectangle::VariantRectangle(Variant* variant) : _topLeft(0, 0), _variant(variant) {}
 
-VariantRectangle::VariantRectangle(Variant* variant, Coords topLeft) : _topLeft(topLeft)
-{
-	this->_variant = variant;
-}
+VariantRectangle::VariantRectangle(Variant* variant, Coords topLeft) : _topLeft(topLeft), _variant(variant) {}
 
-VariantRectangle::VariantRectangle(Variant* variant, int topLeftX, int topLeftY) : _topLeft(topLeftX, topLeftY)
-{
-	this->_variant = variant;
-}
+VariantRectangle::VariantRectangle(Variant* variant, int topLeftX, int topLeftY) : _topLeft(topLeftX, topLeftY), _variant(variant) {}
 
 VariantRectangle::~VariantRectangle()
 {
