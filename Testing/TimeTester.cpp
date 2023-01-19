@@ -131,11 +131,11 @@ std::vector<Type*> TimeTester::TypeVectorCreator(int typesAmount, int variantsAm
 
 			auto sasiad = types[typeId];
 
-			char side;
-			if (typeId % 2 == 0) side = 'R';
-			else if (typeId % 3 == 0) side = 'D';
-			else if (typeId % 5 == 0) side = 'L';
-			else side = 'U';
+			SIDE side;
+			if (typeId % 2 == 0) side = SIDE::RIGHT;
+			else if (typeId % 3 == 0) side = SIDE::DOWN;
+			else if (typeId % 5 == 0) side = SIDE::LEFT;
+			else side = SIDE::UP;
 			type->RemoveRequirement(sasiad, true); //A fix if the element is already a neighbour
 			type->AddRequirement(side, sasiad, true);
 			i++;

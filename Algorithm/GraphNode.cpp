@@ -10,7 +10,7 @@ unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
 
 
     unsigned max = 0;
-    for (auto branch : this->next)
+    /*for (auto branch : this->next)
     {
         unsigned myCost = 0;
         if (!this->isRoot)
@@ -30,56 +30,105 @@ unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
         unsigned cost = branch->GoThroughBranch(combination) + myCost;
         if (cost > max)
             max = cost;
-    }
+    }*/
 
     return max;
 }
 
-void GraphNode::removeChildNode(GraphNode* node)
+//void GraphNode::removeChildNode(GraphNode* node)
+//{
+//    this->next.erase(std::find(this->next.begin(), this->next.end(), node));
+//}
+
+std::vector<GraphNode*> GraphNode::GetVectorBySide(SIDE side)
 {
-    this->next.erase(std::find(this->next.begin(), this->next.end(), node));
+    switch (side)
+    {
+    case FPA::SIDE::UP:
+    {
+        return this->up;
+    }
+    case FPA::SIDE::LEFT:
+    {
+        return this->left;
+    }
+    case FPA::SIDE::DOWN:
+    {
+        return this->down;
+    }
+    case FPA::SIDE::RIGHT:
+    {
+        return this->right;
+    }
+    default:
+        break;
+    }
 }
 
-GraphNode::GraphNode(bool Root, bool is_H_Graph)
+std::vector<GraphNode*> GraphNode::GetVectorByOppsiteSide(SIDE side)
+{
+    switch (side)
+    {
+    case FPA::SIDE::UP:
+    {
+        return this->down;
+    }
+    case FPA::SIDE::LEFT:
+    {
+        return this->right;
+    }
+    case FPA::SIDE::DOWN:
+    {
+        return this->up;
+    }
+    case FPA::SIDE::RIGHT:
+    {
+        return this->left;
+    }
+    default:
+        break;
+    }
+}
+
+GraphNode::GraphNode(bool Root)
 {
     this->isRoot = Root;
     this->isEnd = !Root;
-    this->calcHeight = is_H_Graph;
     this->type = nullptr;
 }
 
-GraphNode::GraphNode(Type* theType, bool is_H_Graph)
+GraphNode::GraphNode(Type* theType)
 {
     this->isEnd = false;
     this->isRoot = false;
     this->type = theType;
-    this->calcHeight = is_H_Graph;
 }
 
 GraphNode::~GraphNode()
 {
-    for (auto node : this->next)
+    for (auto node : this->right)
     {
-        if (node->prev.size() == 1) //I am the only parent
+        if (node->left.size() == 1) //I am the only parent
         {
             delete node;
         }
         else //Remove child connection to me
         {
-            auto it = std::find(node->prev.begin(), node->prev.end(), this);
-            node->prev.erase(it);
+            auto it = std::find(node->left.begin(), node->left.end(), this);
+            node->left.erase(it);
         }
     }
-
-    this->prev.clear();
-    this->next.clear();
+    this->up.clear();
+    this->down.clear();
+    this->left.clear();
+    this->right.clear();
     this->type = nullptr;
 }
 
-void GraphNode::AddNodeToGraph(GraphNode* node)
-{
+void GraphNode::ConnectWithNode(GraphNode* node, SIDE side)
+{    
     bool found = false;
-    for(auto& nod : this->next)
+    for(auto& nod : this->GetVectorBySide(side))
         if (nod == node)
         {
             found = true;
@@ -88,8 +137,8 @@ void GraphNode::AddNodeToGraph(GraphNode* node)
 
     if (!found) //Preventing adding the same node multiple times
     {
-        this->next.push_back(node);
-        node->prev.push_back(this);
+        this->GetVectorBySide(side).push_back(node);
+        node->GetVectorByOppsiteSide(side).push_back(this);
     }
 
 }
@@ -101,18 +150,6 @@ unsigned int GraphNode::calculateCost(std::vector<Variant*> combination) const
 
     return GoThroughBranch(combination);
 
-}
-
-GraphNode* GraphNode::FindNodeByType(Type* searched)
-{
-    for (auto node : this->next)
-    {
-        if (node->type == searched)
-            return node;
-        node->FindNodeByType(searched);
-    }
-
-    return nullptr;
 }
 
 Type* GraphNode::GetType()
