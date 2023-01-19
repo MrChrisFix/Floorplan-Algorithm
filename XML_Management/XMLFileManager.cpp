@@ -184,8 +184,9 @@ std::vector<FPA::Type*> XMLFileManager::ReadFromXML(std::string path)
 			}
 
 			auto direction = reqNode->last_attribute("direction")->value();
+			FPA::SIDE side = FPA::CharToSide(direction[0]);
 
-			parType->AddRequirement(direction[0], childType, false);
+			parType->AddRequirement(side, childType, false);
 		}
 	}
 	return types;

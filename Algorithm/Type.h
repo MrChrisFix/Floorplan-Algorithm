@@ -2,6 +2,7 @@
 #include <vector>
 #include "Variant.h"
 #include <string>
+#include "SideEnum.h"
 
 namespace FPA {
 
@@ -66,7 +67,7 @@ public:
 	 * @param type The type of the requirement
 	 * @param onBoth The requirement should be added on the invoked Type and given Type
 	*/
-	void AddRequirement(char side, Type* type, bool onBoth = true);
+	void AddRequirement(SIDE side, Type* type, bool onBoth = true);
 
 	/**
 	 * Removes the given requirement from requirements vector

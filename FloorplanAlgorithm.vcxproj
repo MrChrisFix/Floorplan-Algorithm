@@ -181,17 +181,22 @@
   <ItemGroup>
     <ClInclude Include="Algorithm\AlgorithmManager.h" />
     <ClInclude Include="Algorithm\GraphNode.h" />
+    <ClInclude Include="Algorithm\PlacementGraph.h" />
     <ClInclude Include="Algorithm\ResultStruct.h" />
+    <ClInclude Include="Algorithm\SideEnum.h" />
     <ClInclude Include="Algorithm\Type.h" />
     <ClInclude Include="Algorithm\Variant.h" />
+    <ClInclude Include="Algorithm\VariantRectangle.h" />
     <ClInclude Include="Testing\TimeTester.h" />
     <ClInclude Include="XML_Management\XMLFileManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Algorithm\AlgorithmManager.cpp" />
     <ClCompile Include="Algorithm\GraphNode.cpp" />
+    <ClCompile Include="Algorithm\PlacementGraph.cpp" />
     <ClCompile Include="Algorithm\Type.cpp" />
     <ClCompile Include="Algorithm\Variant.cpp" />
+    <ClCompile Include="Algorithm\VariantRectangle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Testing\TimeTester.cpp" />
     <ClCompile Include="XML_Management\XMLFileManager.cpp" />
