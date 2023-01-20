@@ -1,4 +1,5 @@
 #include "PlacementGraph.h"
+#include "RectanglePlacer.h"
 namespace FPA {
 
 PlacementGraph::PlacementGraph()
@@ -37,6 +38,7 @@ unsigned PlacementGraph::calculateGGraph(std::map<Type*, VariantRectangle*>& pla
 	}
 	return Gmax - Gmin;
 }
+
 unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& plane)
 {
 	int Hmin = INT32_MAX, Hmax = 0;
@@ -75,7 +77,7 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 		}
 
 		if (type->left.empty())
-			node->ConnectWithNode(H_end, SIDE::LEFT);
+			node->ConnectWithNode(H_start, SIDE::LEFT);
 		else
 		{
 			for (auto& left : type->left)
@@ -91,7 +93,7 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 			}
 		}
 		if (type->right.empty())
-			node->ConnectWithNode(H_start, SIDE::RIGHT);
+			node->ConnectWithNode(H_end, SIDE::RIGHT);
 
 		//At this point every type should have it's node
 
@@ -109,33 +111,18 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 		if (type->up.empty())
 			node->ConnectWithNode(G_start, SIDE::UP);
 	}
-
 }
-std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::vector<Variant*> configuration)
+
+std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Variant*> configuration)
 {
-	// Steps:
-	// 1. Create plane of rectangles and place them correctly
-	// 2. Calculate 'G graph'
-	// 3. Calculate 'H graph'
+	RectanglePlacer placer;
 
-	// I think calculating the graphs will be super easy.
-	// E.g. for the H graph just check which element is the most left by comparing element from the 'right' vector of H_start
-	// and which element is the most right by comparing elements from the 'left' vector of H_end
-
-	std::map<Type*, VariantRectangle*> rectanglePlane = this->CreateAndPlaceRectangles(configuration); //<Todo
+	std::map<Type*, VariantRectangle*> rectanglePlane = placer.PlaceRectangles(this->H_start, configuration);
 
 	auto G = this->calculateGGraph(rectanglePlane);
 	auto H = this->calculateHGraph(rectanglePlane);
 
 	return std::pair<unsigned, unsigned>(G, H); //G, H
 }
-std::map<Type*, VariantRectangle*> PlacementGraph::CreateAndPlaceRectangles(std::vector<Variant*> configuration)
-{
-	if (G_start == nullptr)
-		throw "Uninitialized graph";
 
-	//TODO
-
-	return std::map<Type*, VariantRectangle*>();
-}
 } //namespace FPA

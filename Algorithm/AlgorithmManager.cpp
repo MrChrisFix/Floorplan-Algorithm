@@ -179,33 +179,35 @@ void AlgorithmManager::FindOptimal()
 	}
 	else
 	{
-		std::vector<Variant*> VariantStack;
+		std::map<Type*, Variant*> VariantStack;
 		FindSinglethread(0, VariantStack);
 	}
 }
 
-void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> variantStack)
+void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*> variantStack)
 {
 	for (auto variant : this->types[depth]->GetVariants())
 	{
-		variantStack.push_back(variant);
+		//variantStack.push_back(variant);
+		variantStack[types[depth]] = variant;
+
 		auto costs = Graphs->CalculateCost(variantStack);
 		unsigned G_Value = costs.first;
 		unsigned H_Value = costs.second; 
 		if (G_Value * H_Value >= this->bestValue)
 		{
-			variantStack.pop_back();
+			//variantStack.pop_back();
 			continue;
 		}
 
-		if (depth == this->types.size() - 1)
+		if (depth == this->types.size() - 1) //Leaf
 		{
 			if (G_Value * H_Value < this->bestValue)
 			{
 				this->bestValue = G_Value * H_Value;
 				this->bestHeight = G_Value;
 				this->bestWidth = H_Value;
-				this->bestCombination = variantStack;
+				//this->bestCombination = variantStack; //TODO
 			}
 		}
 		else if (depth < this->types.size())
@@ -213,15 +215,16 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::vector<Variant*> va
 			FindSinglethread(depth + 1, variantStack); // Going deeper into the "tree"
 		}
 
-		variantStack.pop_back();
+		//variantStack.pop_back();
 	}
+	variantStack.erase(types[depth]);
 }
 
-void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> variantStack)
+void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*> variantStack)
 {
 	for (auto variant : this->types[depth]->GetVariants())
 	{
-		variantStack.push_back(variant);
+		variantStack[types[depth]] = variant;
 
 		auto costs = Graphs->CalculateCost(variantStack);
 		unsigned G_Value = costs.first;
@@ -229,14 +232,14 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> var
 
 		if (G_Value * H_Value >= this->bestValue)
 		{
-			variantStack.pop_back();
+			//variantStack.pop_back();
 			continue;
 		}
 
 
-		if (depth == this->types.size() - 1)
+		if (depth == this->types.size() - 1) //Leaf
 		{
-			CalculateCosts(variantStack);
+			CalculateCostsWithMutex(variantStack);
 		}
 		else if (depth < this->types.size())
 		{
@@ -244,9 +247,9 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> var
 			if (this->awaliableBufferSpace > 0)
 			{
 				awaliableBufferSpace--;
-				this->WorkToDo.push_back(std::pair<int, std::vector<Variant*>>(depth+1, variantStack));
+				this->WorkToDo.push_back(std::pair<int, std::map<Type*, Variant*>>(depth+1, variantStack));
 				this->bufferSizeGuard.unlock();
-				variantStack.pop_back();
+				//variantStack.pop_back();
 				continue;
 			}
 			else
@@ -255,7 +258,7 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::vector<Variant*> var
 				FindMultithread(depth + 1, variantStack); // Going deeper into the "tree"
 			}
 		}
-		variantStack.pop_back();
+		//variantStack.pop_back();
 	}
 }
 
@@ -266,7 +269,7 @@ void AlgorithmManager::ManageThreads()
 	std::vector<std::future<void>> ThreadPool;
 	short avaliableThreads = threadNum;
 
-	std::vector<Variant*> VariantStack;
+	std::map<Type*, Variant*> VariantStack;
 	ThreadPool.push_back(std::async(std::launch::async, [this, VariantStack] {this->FindMultithread(0, VariantStack);}));
 
 	avaliableThreads--;
@@ -311,11 +314,11 @@ void AlgorithmManager::ManageThreads()
 	}
 }
 
-void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
+void AlgorithmManager::CalculateCostsWithMutex(std::map<Type*, Variant*> variantStack)
 {
-		auto costs = Graphs->CalculateCost(variantStack);
-		unsigned G_Value = costs.first;
-		unsigned H_Value = costs.second; 
+	auto costs = Graphs->CalculateCost(variantStack);
+	unsigned G_Value = costs.first;
+	unsigned H_Value = costs.second; 
 	auto value = G_Value * H_Value;
 
 	this->guard.lock();
@@ -324,7 +327,7 @@ void AlgorithmManager::CalculateCosts(std::vector<Variant*> variantStack)
 		this->bestValue = value;
 		this->bestHeight = G_Value;
 		this->bestWidth = H_Value;
-		this->bestCombination = variantStack;
+		//this->bestCombination = variantStack; //TODO
 	}
 	this->guard.unlock();
 }
