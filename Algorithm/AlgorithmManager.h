@@ -34,7 +34,7 @@ private:
 	std::mutex guard;
 
 public:
-	std::deque<std::pair<int, std::vector<Variant*>>> WorkToDo;
+	std::deque<std::pair<int, std::map<Type*, Variant*>>> WorkToDo;
 
 public:
 	AlgorithmManager();
@@ -48,10 +48,10 @@ private:
 	//void PopulateGraphs();
 	void FindOptimal();
 
-	void FindSinglethread(unsigned depth, std::vector<Variant*> variantStack);
-	void FindMultithread(unsigned depth, std::vector<Variant*> variantStack);
+	void FindSinglethread(unsigned depth, std::map<Type*, Variant*> variantStack);
+	void FindMultithread(unsigned depth, std::map<Type*, Variant*> variantStack);
 	void ManageThreads();
-	void CalculateCosts(std::vector<Variant*> variantStack);
+	void CalculateCostsWithMutex(std::map<Type*, Variant*> variantStack);
 
 	//void Populate_G_Graph(GraphNode* parentNode);
 	//void Populate_H_Graph(GraphNode* currentNode);

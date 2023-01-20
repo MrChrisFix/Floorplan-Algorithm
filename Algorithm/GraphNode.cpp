@@ -40,7 +40,7 @@ unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
 //    this->next.erase(std::find(this->next.begin(), this->next.end(), node));
 //}
 
-std::vector<GraphNode*> GraphNode::GetVectorBySide(SIDE side)
+std::vector<GraphNode*>& GraphNode::GetVectorBySide(SIDE side)
 {
     switch (side)
     {
@@ -65,7 +65,7 @@ std::vector<GraphNode*> GraphNode::GetVectorBySide(SIDE side)
     }
 }
 
-std::vector<GraphNode*> GraphNode::GetVectorByOppsiteSide(SIDE side)
+std::vector<GraphNode*>& GraphNode::GetVectorByOppsiteSide(SIDE side)
 {
     switch (side)
     {
@@ -88,6 +88,16 @@ std::vector<GraphNode*> GraphNode::GetVectorByOppsiteSide(SIDE side)
     default:
         break;
     }
+}
+
+std::vector<GraphNode*>& GraphNode::GetRightNodes()
+{
+    return this->right;
+}
+
+bool GraphNode::isEndNode()
+{
+    return this->isEnd;
 }
 
 GraphNode::GraphNode(bool Root)

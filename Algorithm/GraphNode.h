@@ -61,6 +61,9 @@ public:
 	*/
 	Type* GetType();
 
+	std::vector<GraphNode*>& GetRightNodes();
+	bool isEndNode();
+
 private:
 	/**
 	 * Private method used in cost calculation
@@ -69,8 +72,8 @@ private:
 	*/
 	unsigned GoThroughBranch(std::vector<Variant*>& combination) const;
 
-	std::vector<GraphNode*> GetVectorBySide(SIDE side);
-	std::vector<GraphNode*> GetVectorByOppsiteSide(SIDE side);
+	std::vector<GraphNode*>& GetVectorBySide(SIDE side);
+	std::vector<GraphNode*>& GetVectorByOppsiteSide(SIDE side);
 
 };
 

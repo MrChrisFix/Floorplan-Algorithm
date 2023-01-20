@@ -21,9 +21,7 @@ public:
 
 	void CreateGraph(std::vector<Type*> types);
 
-	std::pair<unsigned, unsigned> CalculateCost(std::vector<Variant*> configuration);
-
-	std::map<Type*, VariantRectangle*> CreateAndPlaceRectangles(std::vector<Variant*> configuration);
+	std::pair<unsigned, unsigned> CalculateCost(std::map<Type*, Variant*> configuration);
 };
 
 } //namespace FPA
