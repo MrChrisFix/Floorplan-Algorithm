@@ -15,6 +15,8 @@ private:
 	unsigned calculateGGraph(std::map<Type*, VariantRectangle*> &plane);
 	unsigned calculateHGraph(std::map<Type*, VariantRectangle*> &plane);
 
+	bool isValidConfiguration(std::map<Type*, Variant*> configuration);
+
 public:
 	PlacementGraph();
 	~PlacementGraph();
@@ -22,6 +24,8 @@ public:
 	void CreateGraph(std::vector<Type*> types);
 
 	std::pair<unsigned, unsigned> CalculateCost(std::map<Type*, Variant*> configuration);
+
+	std::map<Type*, VariantRectangle*> GetRectanglePlane(std::map<Type*, Variant*> configuration);
 };
 
 } //namespace FPA

@@ -95,6 +95,11 @@ std::vector<GraphNode*>& GraphNode::GetRightNodes()
     return this->right;
 }
 
+std::vector<GraphNode*>& GraphNode::GetDownNodes()
+{
+    return this->down;
+}
+
 bool GraphNode::isEndNode()
 {
     return this->isEnd;

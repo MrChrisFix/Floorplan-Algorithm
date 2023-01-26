@@ -24,7 +24,7 @@ private:
 	unsigned bestValue;
 	unsigned bestWidth;
 	unsigned bestHeight;
-	std::vector<Variant*> bestCombination;
+	std::map<Type*, Variant*> bestCombination;
 
 	//Multithreading
 	short threadNum;

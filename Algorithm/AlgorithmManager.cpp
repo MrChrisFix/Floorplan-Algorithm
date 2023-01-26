@@ -43,6 +43,7 @@ ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool mult
 	results.bestHeight = this->bestHeight;
 	results.bestWidth = this->bestWidth;
 	results.bestCombination = this->bestCombination;
+	results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);
 	results.time_microsec = elapsed_us;
 
 	return results;
@@ -207,7 +208,7 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*
 				this->bestValue = G_Value * H_Value;
 				this->bestHeight = G_Value;
 				this->bestWidth = H_Value;
-				//this->bestCombination = variantStack; //TODO
+				this->bestCombination = variantStack;
 			}
 		}
 		else if (depth < this->types.size())
@@ -327,7 +328,7 @@ void AlgorithmManager::CalculateCostsWithMutex(std::map<Type*, Variant*> variant
 		this->bestValue = value;
 		this->bestHeight = G_Value;
 		this->bestWidth = H_Value;
-		//this->bestCombination = variantStack; //TODO
+		this->bestCombination = variantStack;
 	}
 	this->guard.unlock();
 }

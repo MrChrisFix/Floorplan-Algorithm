@@ -57,6 +57,41 @@ unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& pla
 	return Hmax - Hmin;
 }
 
+//USELESS?
+bool PlacementGraph::isValidConfiguration(std::map<Type*, Variant*> configuration)
+{
+	for (auto& item : configuration)
+	{
+		int bottomSize=0, rightSize=0;
+
+		// 3
+		for (auto type : item.first->down)
+		{
+			if (configuration[type] != nullptr)
+				bottomSize += configuration[type]->GetWidth();
+		}
+
+		for (auto type : item.first->right)
+		{
+			if (configuration[type] != nullptr)
+				rightSize += configuration[type]->GetHeight();
+		}
+
+		if(rightSize > item.second->GetHeight())
+
+		if (rightSize > item.second->GetHeight() && bottomSize > item.second->GetWidth())
+			return false;
+
+		// 1
+		if (rightSize > item.second->GetHeight())
+		{
+		}
+	}
+
+
+	return true;
+}
+
 void PlacementGraph::CreateGraph(std::vector<Type*> types)
 {
 	if (types.empty()) 
@@ -95,7 +130,6 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 		if (type->right.empty())
 			node->ConnectWithNode(H_end, SIDE::RIGHT);
 
-		//At this point every type should have it's node
 
 		if (type->down.empty())
 			node->ConnectWithNode(G_end, SIDE::DOWN);
@@ -103,9 +137,14 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 		{
 			for (auto& down : type->down)
 			{
-				if (TypeLookup[down] == nullptr)
-					throw "Types are wrong connected";
-				node->ConnectWithNode(TypeLookup[down], SIDE::DOWN);
+				if (TypeLookup[down] != nullptr)
+				{
+					node->ConnectWithNode(TypeLookup[down], SIDE::DOWN);
+					continue;
+				}
+				auto childNode = new GraphNode(down);
+				TypeLookup[down] = childNode;
+				node->ConnectWithNode(childNode, SIDE::DOWN);
 			}
 		}
 		if (type->up.empty())
@@ -115,9 +154,7 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 
 std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Variant*> configuration)
 {
-	RectanglePlacer placer;
-
-	std::map<Type*, VariantRectangle*> rectanglePlane = placer.PlaceRectangles(this->H_start, configuration);
+	std::map<Type*, VariantRectangle*> rectanglePlane = GetRectanglePlane(configuration);
 
 	auto G = this->calculateGGraph(rectanglePlane);
 	auto H = this->calculateHGraph(rectanglePlane);
@@ -125,4 +162,14 @@ std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Vari
 	return std::pair<unsigned, unsigned>(G, H); //G, H
 }
 
+std::map<Type*, VariantRectangle*> PlacementGraph::GetRectanglePlane(std::map<Type*, Variant*> configuration)
+{
+	RectanglePlacer placer;
+
+	std::map<Type*, VariantRectangle*> rectanglePlane = placer.PlaceRectangles(this->H_start, configuration);
+
+	return rectanglePlane;
+}
+
 } //namespace FPA
+
