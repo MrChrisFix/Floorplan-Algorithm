@@ -1,5 +1,6 @@
 #pragma once
 #include "Variant.h"
+#include "SideEnum.h"
 
 namespace FPA {
 
@@ -28,6 +29,15 @@ public:
 
 	void MoveXAxis(int delta);
 	void MoveYAxis(int delta);
+
+	bool isIntersecting(VariantRectangle* other);
+	/**
+	 * Checks is the given rectangle is on the given side
+	 * @param other The rectangle that should be chekced
+	 * @param side The side on which 'other' shuld be
+	 * @return boolean
+	*/
+	bool isOtherBySide(VariantRectangle* other, SIDE side);
 
 };
 

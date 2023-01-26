@@ -62,6 +62,7 @@ public:
 	Type* GetType();
 
 	std::vector<GraphNode*>& GetRightNodes();
+	std::vector<GraphNode*>& GetDownNodes();
 	bool isEndNode();
 
 private:

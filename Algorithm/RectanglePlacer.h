@@ -16,6 +16,15 @@ private:
 
 	void AddNextRect(int tlX, int tlY, GraphNode* node);
 
+	enum class Intersection{
+		None,		// No intersecton
+		Fully,		// Fully inside of one => technicly shouldn't be possible, becouse neighbouring elemment shuld be at least Side intersecting
+		Side,		// Only one border is crossed
+		Corner,		// Corner crossing each other
+		Bullet,		// Two parrarel sides
+		Half		// 3 sides are in each other; like Side but the opposite rectangle involved
+	};
+
 public:
 	RectanglePlacer();
 	~RectanglePlacer();
