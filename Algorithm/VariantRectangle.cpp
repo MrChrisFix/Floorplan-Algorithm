@@ -3,7 +3,7 @@ namespace FPA {
 
 VariantRectangle::VariantRectangle(Variant* variant) : _topLeft(0, 0), _variant(variant) {}
 
-VariantRectangle::VariantRectangle(Variant* variant, Coords topLeft) : _topLeft(topLeft), _variant(variant) {}
+VariantRectangle::VariantRectangle(Variant* variant, Point topLeft) : _topLeft(topLeft), _variant(variant) {}
 
 VariantRectangle::VariantRectangle(Variant* variant, int topLeftX, int topLeftY) : _topLeft(topLeftX, topLeftY), _variant(variant) {}
 
@@ -12,30 +12,30 @@ VariantRectangle::~VariantRectangle()
 	this->_variant = nullptr;
 }
 
-VariantRectangle::Coords VariantRectangle::TopLeft()
+Point VariantRectangle::TopLeft()
 {
 	return this->_topLeft;
 }
 
-VariantRectangle::Coords VariantRectangle::TopRight()
+Point VariantRectangle::TopRight()
 {
 	int X = _topLeft.X + _variant->GetWidth();
 	int Y = _topLeft.Y;
-	return Coords(X, Y);
+	return Point(X, Y);
 }
 
-VariantRectangle::Coords VariantRectangle::BottomLeft()
+Point VariantRectangle::BottomLeft()
 {
 	int X = _topLeft.X;
 	int Y = _topLeft.Y + _variant->GetHeight();;
-	return Coords(X, Y);
+	return Point(X, Y);
 }
 
-VariantRectangle::Coords VariantRectangle::BottomRight()
+Point VariantRectangle::BottomRight()
 {
 	int X = _topLeft.X + _variant->GetWidth();
 	int Y = _topLeft.Y + _variant->GetHeight();
-	return Coords(X, Y);
+	return Point(X, Y);
 }
 
 void VariantRectangle::MoveXAxis(int delta)

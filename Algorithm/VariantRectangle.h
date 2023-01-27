@@ -1,31 +1,32 @@
 #pragma once
 #include "Variant.h"
 #include "SideEnum.h"
+#include "Point.h"
 
 namespace FPA {
 
 class VariantRectangle
 {
 public:
-	struct Coords{
+	/*struct Coords{
 		int X, Y;
 		Coords(int x, int y) : X(x), Y(y) {};
-	};
+	};*/
 
 private:
 	Variant* _variant;
-	Coords _topLeft;
+	Point _topLeft;
 
 public:
 	VariantRectangle(Variant* variant);
-	VariantRectangle(Variant* variant, Coords TopLeft);
+	VariantRectangle(Variant* variant, Point TopLeft);
 	VariantRectangle(Variant* variant, int topLeftX, int topLeftY);
 	~VariantRectangle();
 
-	Coords TopLeft();
-	Coords TopRight();
-	Coords BottomLeft();
-	Coords BottomRight();
+	Point TopLeft();
+	Point TopRight();
+	Point BottomLeft();
+	Point BottomRight();
 
 	void MoveXAxis(int delta);
 	void MoveYAxis(int delta);

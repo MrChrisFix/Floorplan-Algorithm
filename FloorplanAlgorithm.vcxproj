@@ -182,6 +182,8 @@
     <ClInclude Include="Algorithm\AlgorithmManager.h" />
     <ClInclude Include="Algorithm\GraphNode.h" />
     <ClInclude Include="Algorithm\PlacementGraph.h" />
+    <ClInclude Include="Algorithm\Point.h" />
+    <ClInclude Include="Algorithm\RectanglePlacer.h" />
     <ClInclude Include="Algorithm\ResultStruct.h" />
     <ClInclude Include="Algorithm\SideEnum.h" />
     <ClInclude Include="Algorithm\Type.h" />
@@ -194,6 +196,7 @@
     <ClCompile Include="Algorithm\AlgorithmManager.cpp" />
     <ClCompile Include="Algorithm\GraphNode.cpp" />
     <ClCompile Include="Algorithm\PlacementGraph.cpp" />
+    <ClCompile Include="Algorithm\RectanglePlacer.cpp" />
     <ClCompile Include="Algorithm\Type.cpp" />
     <ClCompile Include="Algorithm\Variant.cpp" />
     <ClCompile Include="Algorithm\VariantRectangle.cpp" />
