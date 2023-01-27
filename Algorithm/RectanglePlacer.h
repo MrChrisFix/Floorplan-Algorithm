@@ -15,6 +15,7 @@ private:
 	Variant* blankVariant; //TODO: somehow manage memory of this object
 
 	void AddNextRect(int tlX, int tlY, GraphNode* node);
+	void AddRectangles();
 
 	enum class Intersection{
 		None,		// No intersecton
