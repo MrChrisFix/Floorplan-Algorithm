@@ -159,14 +159,14 @@ std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Vari
 	auto G = this->calculateGGraph(rectanglePlane);
 	auto H = this->calculateHGraph(rectanglePlane);
 
-	return std::pair<unsigned, unsigned>(G, H); //G, H
+	return std::pair<unsigned, unsigned>(G, H);
 }
 
 std::map<Type*, VariantRectangle*> PlacementGraph::GetRectanglePlane(std::map<Type*, Variant*> configuration)
 {
-	RectanglePlacer placer;
+	RectanglePlacer placer(this->H_start, configuration);
 
-	std::map<Type*, VariantRectangle*> rectanglePlane = placer.PlaceRectangles(this->H_start, configuration);
+	std::map<Type*, VariantRectangle*> rectanglePlane = placer.GetPlacedRectangles();
 
 	return rectanglePlane;
 }

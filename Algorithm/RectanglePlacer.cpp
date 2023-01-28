@@ -1,49 +1,25 @@
 #include "RectanglePlacer.h"
-#include <stack>
 
 namespace FPA
 {
 
 void RectanglePlacer::AddRectangles()
 {
-	struct Parent {
-		GraphNode* node;
-		int rightIndex;
-		int downIndex;
-		Parent(GraphNode* nodeptr, int nextRight, int nextDown) : node(nodeptr), rightIndex(nextRight), downIndex(nextDown) {};
-	};
-
-	std::stack<Parent> parentPtrs;
-	auto currentNode = startNode;
-	int currentRightIndex = 0;
-	int currentDownIndex = 0;
-
-	Point pt(0,0);
-	Point suggestedPt(0, 0);
-
 	while (true)
 	{
-		if (currentNode->GetType() != nullptr)
+		if (!currentNode->isStartNode())
 		{
 			if (this->plane[currentNode->GetType()] != nullptr) // this element already exists on the plane
 			{
 				if (currentDownIndex == 0 && currentRightIndex == 0) // the indexes are always 0 when entering an unknown element
 				{
-					currentNode = parentPtrs.top().node;
-					currentRightIndex = parentPtrs.top().rightIndex;
-					currentDownIndex = parentPtrs.top().downIndex;
-					parentPtrs.pop();
+					GotoParent();
 					continue;
 				}
 			}
 			else
 			{
-				//Create rect
-				Variant* var = configuration[currentNode->GetType()];
-				if (var == nullptr)
-					var = this->blankVariant;
-				VariantRectangle* rect = new VariantRectangle(var, pt.X, pt.Y); //TODO: position
-				this->plane[currentNode->GetType()] = rect;
+				CreateRectangle();
 			}
 
 		}
@@ -51,75 +27,134 @@ void RectanglePlacer::AddRectangles()
 
 		if (currentNode->GetRightNodes().size() <= currentRightIndex || currentNode->GetRightNodes()[0]->isEndNode()) //Did all elements on the right
 		{
+			lastBottomVar = currentNode->GetRightNodes()[currentNode->GetRightNodes().size() - 1];
+
 			//Go down
 			if (currentNode->GetDownNodes().size() <= currentDownIndex || currentNode->GetDownNodes()[0]->isEndNode()) //Also did everything down
-			{
-				//I should go back to the parent
-
+			{//In this case I should go back to the parent
+				
 				if (parentPtrs.empty())
 					break;
 
-				currentNode = parentPtrs.top().node;
-				currentRightIndex = parentPtrs.top().rightIndex;
-				currentDownIndex = parentPtrs.top().downIndex;
-				parentPtrs.pop();
-				continue;
+				GotoParent();
+				continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
 			}
 			else //I can go more down (TODO: but should i always do it?)
 			{
-				bool found = false;
-				for (auto right : parentPtrs.top().node->GetRightNodes())
-					if (currentNode->GetDownNodes()[currentDownIndex] == right)
-						found = true;
-
-				if (!found) // If the element down isn't part of our parent left
+				if (!allowedToGoDown())
 				{
-					currentNode = parentPtrs.top().node;
-					currentRightIndex = parentPtrs.top().rightIndex;
-					currentDownIndex = parentPtrs.top().downIndex;
-					parentPtrs.pop();
-					continue;
+					GotoParent();
+					continue; //<- this continue could be useless, becouse without it goes anyway to the end of the loop
 				}
 
-				Variant* var = configuration[currentNode->GetType()];
-				if (var != nullptr)
-					pt.Y += var->GetHeight();
+				lastBottomVar = currentNode->GetRightNodes()[currentNode->GetRightNodes().size()];
+				suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
 
-				parentPtrs.push(Parent(currentNode, currentRightIndex, currentDownIndex + 1));
-				currentNode = currentNode->GetDownNodes()[currentDownIndex];
-				currentRightIndex = 0;
-				currentDownIndex = 0;
-				continue;
+				pt = plane[currentNode->GetType()]->BottomLeft();
+
+				if (currentDownIndex > 0)
+				{
+					auto lastBeenBottomElement = currentNode->GetDownNodes()[currentDownIndex - 1];
+					Variant* lastBottomVariant = configuration[lastBeenBottomElement->GetType()];
+						if (lastBottomVariant != nullptr)
+							pt.Y += lastBottomVariant->GetWidth();
+				}
+
+				PushGoDown();
+				continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
 			}
 		}
 		else //I can go more to the right
 		{
 			Variant* var = configuration[currentNode->GetType()];
-			if (var != nullptr)
-				pt.X += var->GetWidth();
-			
-			if (currentRightIndex > 0)
+			if (currentNode->GetType() == nullptr) //startNode
 			{
-				auto lastBeenRightElement = currentNode->GetRightNodes()[currentRightIndex - 1];
-				Variant* lastBeenRightVariant = configuration[lastBeenRightElement->GetType()];
-				if (lastBeenRightVariant != nullptr)
-					pt.Y += lastBeenRightVariant->GetHeight();
+				suggestedPt.X = 0; suggestedPt.Y = 0;
+
+			}
+			else
+			{
+				suggestedPt = plane[currentNode->GetType()]->TopRight();
+				if (currentRightIndex > 0)
+				{
+					Type* lastBottom = currentNode->GetRightNodes()[currentRightIndex - 1]->GetType();
+					suggestedPt.Y = plane[lastBottom]->BottomLeft().Y;
+				}
+
+				if (currentRightIndex == currentNode->GetRightNodes().size()-1)
+				{
+					auto downMostLeftTop = currentNode->GetDownNodes()[currentNode->GetDownNodes().size() - 1]->GetRightNodes()[0];
+					if (downMostLeftTop == currentNode->GetRightNodes()[currentRightIndex])
+					{
+						//Small Rabbit hole
+					}
+				}
 			}
 
-			parentPtrs.push(Parent(currentNode, currentRightIndex + 1, currentDownIndex));
-			currentNode = currentNode->GetRightNodes()[currentRightIndex];
-			currentRightIndex = 0;
-			currentDownIndex = 0;
-			continue;
+			PushGoRight();
+			continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
 		}
 	}
 }
 
+void RectanglePlacer::GotoParent()
+{
+	currentNode = parentPtrs.top().node;
+	currentRightIndex = parentPtrs.top().rightIndex;
+	currentDownIndex = parentPtrs.top().downIndex;
+	parentPtrs.pop();
+}
 
-RectanglePlacer::RectanglePlacer()
+
+RectanglePlacer::RectanglePlacer(GraphNode* start_H_Node, std::map<Type*, Variant*> variantConfiguration) : pt(0,0), suggestedPt(0,0)
 {
 	this->blankVariant = new Variant(0, 0, nullptr);
-	this->startNode = nullptr;
+	this->startNode = start_H_Node;
+	this->configuration = variantConfiguration;
+}
+
+void RectanglePlacer::PushGoRight()
+{
+	parentPtrs.push(Parent(currentNode, currentRightIndex + 1, currentDownIndex));
+	currentNode = currentNode->GetRightNodes()[currentRightIndex];
+	currentRightIndex = 0;
+	currentDownIndex = 0;
+}
+
+void RectanglePlacer::PushGoDown()
+{
+	parentPtrs.push(Parent(currentNode, currentRightIndex, currentDownIndex + 1));
+	currentNode = currentNode->GetDownNodes()[currentDownIndex];
+	currentRightIndex = 0;
+	currentDownIndex = 0;
+}
+
+void RectanglePlacer::CreateRectangle()
+{
+	Variant* var = configuration[currentNode->GetType()];
+	if (var == nullptr)
+		var = this->blankVariant;
+	VariantRectangle* rect = nullptr; //TODO: position
+
+	if (currentNode->GetRightNodes()[0] == lastBottomVar)
+	{
+		if (currentNode->GetRightNodes().size() == 1)
+		{
+			rect = new VariantRectangle(var, suggestedPt.X - var->GetWidth(), pt.Y);
+		}
+		else
+		{ // is on the border
+			//use a bit moved pt
+			//TODO: calculate the better position
+			rect = new VariantRectangle(var, suggestedPt.X, suggestedPt.Y);
+		}
+	}
+	else
+	{
+		//use sugested pt
+		rect = new VariantRectangle(var, suggestedPt.X - var->GetWidth(), suggestedPt.Y);
+	}
+	this->plane[currentNode->GetType()] = rect;
 }
 
 RectanglePlacer::~RectanglePlacer()
@@ -127,14 +162,26 @@ RectanglePlacer::~RectanglePlacer()
 	this->startNode = nullptr;
 }
 
-std::map<Type*, VariantRectangle*> RectanglePlacer::PlaceRectangles(GraphNode* start_H_Node, std::map<Type*, Variant*> variantConfiguration)
-{
-	this->startNode = start_H_Node;
-	this->configuration = variantConfiguration;
 
+std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
+{
 	AddRectangles();
 
 	return this->plane;
+}
+
+bool RectanglePlacer::allowedToGoDown()
+{	
+	//If the element has nothing on the left it can be considered, bc otherwise the created later rectangle would be in the wrong place
+	if (currentNode->GetDownNodes()[currentDownIndex]->left[0]->isEndNode()) 
+		return true;
+
+
+	for (auto right : parentPtrs.top().node->GetRightNodes())
+		if (currentNode->GetDownNodes()[currentDownIndex] == right)
+			return true;
+
+	return false;
 }
 
 } //namespace FPA
