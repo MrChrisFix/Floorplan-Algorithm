@@ -105,6 +105,11 @@ bool GraphNode::isEndNode()
     return this->isEnd;
 }
 
+bool GraphNode::isStartNode()
+{
+    return this->isRoot;
+}
+
 GraphNode::GraphNode(bool Root)
 {
     this->isRoot = Root;

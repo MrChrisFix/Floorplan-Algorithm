@@ -10,6 +10,7 @@ namespace FPA {
 class GraphNode
 {
 	friend class PlacementGraph;
+	friend class RectanglePlacer;
 
 private:
 	std::vector<GraphNode*> up;		///Vector with the nodes that are up
@@ -64,6 +65,7 @@ public:
 	std::vector<GraphNode*>& GetRightNodes();
 	std::vector<GraphNode*>& GetDownNodes();
 	bool isEndNode();
+	bool isStartNode();
 
 private:
 	/**
