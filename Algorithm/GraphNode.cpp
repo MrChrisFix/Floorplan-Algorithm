@@ -3,43 +3,6 @@
 
 namespace FPA {
 
-unsigned GraphNode::GoThroughBranch(std::vector<Variant*> &combination) const
-{
-    if (this->isEnd)
-        return 0;
-
-
-    unsigned max = 0;
-    /*for (auto branch : this->next)
-    {
-        unsigned myCost = 0;
-        if (!this->isRoot)
-        {
-            for (auto& var : combination)
-            {
-                if (var->GetType() == this->type)
-                {
-                    if (this->calcHeight)
-                        myCost = var->GetHeight();
-                    else
-                        myCost = var->GetWidth();
-                    break;
-                }
-            }
-        }
-        unsigned cost = branch->GoThroughBranch(combination) + myCost;
-        if (cost > max)
-            max = cost;
-    }*/
-
-    return max;
-}
-
-//void GraphNode::removeChildNode(GraphNode* node)
-//{
-//    this->next.erase(std::find(this->next.begin(), this->next.end(), node));
-//}
-
 std::vector<GraphNode*>& GraphNode::GetVectorBySide(SIDE side)
 {
     switch (side)
@@ -160,15 +123,6 @@ void GraphNode::ConnectWithNode(GraphNode* node, SIDE side)
         this->GetVectorBySide(side).push_back(node);
         node->GetVectorByOppsiteSide(side).push_back(this);
     }
-
-}
-
-unsigned int GraphNode::calculateCost(std::vector<Variant*> combination) const
-{
-    if(!this->isRoot) //Only the root should use this method
-        return 0;
-
-    return GoThroughBranch(combination);
 
 }
 
