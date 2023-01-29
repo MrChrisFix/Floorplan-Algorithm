@@ -177,7 +177,6 @@ std::vector<FPA::Type*> XMLFileManager::ReadFromXML(std::string path)
 			auto childTypeName = reqNode->first_attribute("typeName")->value();
 			FPA::Type* childType = TypeByName[childTypeName];
 
-			//TODO: check if type isn't nullptr
 			if (childType == nullptr)
 			{
 				throw "Something went wrong. Try to start over.";
