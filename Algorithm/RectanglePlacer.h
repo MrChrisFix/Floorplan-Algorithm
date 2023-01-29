@@ -18,14 +18,14 @@ private:
 	};
 
 	std::map<Type*, VariantRectangle*> plane;
-	GraphNode* startNode;
+	GraphNode* startNode = nullptr;
 	std::map<Type*, Variant*> configuration;
-	Variant* blankVariant; //TODO: somehow manage memory of this object
+	Variant* blankVariant = nullptr; //TODO: somehow manage memory of this object
 	GraphNode* lastBottomVar = nullptr;
 
 	//Managing
 	std::stack<Parent> parentPtrs;
-	GraphNode* currentNode;
+	GraphNode* currentNode = nullptr;
 	int currentRightIndex = 0;
 	int currentDownIndex = 0;
 
@@ -38,6 +38,12 @@ private:
 	void PushGoDown();
 	void CreateRectangle();
 	bool allowedToGoDown();
+
+	bool goodConfigurationState();
+	bool willFitAllElements(Type* type);
+
+	void calcSuggestedPtRight();
+	void calcSuggestedPtDown();
 
 
 public:
