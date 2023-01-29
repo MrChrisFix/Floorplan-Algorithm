@@ -50,13 +50,6 @@ public:
 	void ConnectWithNode(GraphNode* node, SIDE side);
 
 	/**
-	 * Caltulationg the cost of the invoked graph and the given Variant configuration
-	 * @param combination A vector containing the configuration of Variants
-	 * @return The maximal cost of the configuration (height or width)
-	*/
-	unsigned int calculateCost(std::vector<Variant*> combination) const;
-
-	/**
 	 * Getter
 	 * @return The assigned type of the Node 
 	*/
@@ -68,12 +61,6 @@ public:
 	bool isStartNode();
 
 private:
-	/**
-	 * Private method used in cost calculation
-	 * @param combination A vector containing the configuration of Variants
-	 * @return The maximal cost of the configuration (height or width)
-	*/
-	unsigned GoThroughBranch(std::vector<Variant*>& combination) const;
 
 	std::vector<GraphNode*>& GetVectorBySide(SIDE side);
 	std::vector<GraphNode*>& GetVectorByOppsiteSide(SIDE side);

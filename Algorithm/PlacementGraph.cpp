@@ -57,41 +57,6 @@ unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& pla
 	return Hmax - Hmin;
 }
 
-//USELESS?
-bool PlacementGraph::isValidConfiguration(std::map<Type*, Variant*> configuration)
-{
-	for (auto& item : configuration)
-	{
-		int bottomSize=0, rightSize=0;
-
-		// 3
-		for (auto type : item.first->down)
-		{
-			if (configuration[type] != nullptr)
-				bottomSize += configuration[type]->GetWidth();
-		}
-
-		for (auto type : item.first->right)
-		{
-			if (configuration[type] != nullptr)
-				rightSize += configuration[type]->GetHeight();
-		}
-
-		if(rightSize > item.second->GetHeight())
-
-		if (rightSize > item.second->GetHeight() && bottomSize > item.second->GetWidth())
-			return false;
-
-		// 1
-		if (rightSize > item.second->GetHeight())
-		{
-		}
-	}
-
-
-	return true;
-}
-
 void PlacementGraph::CreateGraph(std::vector<Type*> types)
 {
 	if (types.empty()) 

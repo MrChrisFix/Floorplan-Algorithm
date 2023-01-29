@@ -15,8 +15,6 @@ private:
 	unsigned calculateGGraph(std::map<Type*, VariantRectangle*> &plane);
 	unsigned calculateHGraph(std::map<Type*, VariantRectangle*> &plane);
 
-	bool isValidConfiguration(std::map<Type*, Variant*> configuration);
-
 public:
 	PlacementGraph();
 	~PlacementGraph();
