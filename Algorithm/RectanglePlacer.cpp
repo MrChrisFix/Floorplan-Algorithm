@@ -43,78 +43,99 @@ void RectanglePlacer::AddRectangles()
 				{
 					lastBottomVar = currentNode;
 					GotoParent();
-					continue; //<- this continue could be useless, becouse without it goes anyway to the end of the loop
+					continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
 				}
-
-				//TODO: better down calculations
-				//lastBottomVar = currentNode->GetRightNodes().back();
-				if(lastBottomVar != nullptr)
-					suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
 				else
-					suggestedPt = plane[currentNode->GetType()]->BottomLeft();
-
-				pt = plane[currentNode->GetType()]->BottomLeft();
-
-				if (currentDownIndex > 0)
 				{
-					Type* lastRight = currentNode->GetDownNodes()[currentDownIndex - 1]->GetType();
-					suggestedPt.X = plane[lastRight]->TopLeft().X;
+					//if(lastBottomVar != nullptr)
+					//{
+					//	suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
+					//	if(configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()] != nullptr)
+					//		suggestedPt.X -= configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()]->GetWidth(); //Could backfire, not tested enough
+					//}
+					//else
+					//	suggestedPt = plane[currentNode->GetType()]->BottomLeft();
+
+					//pt = plane[currentNode->GetType()]->BottomLeft();
+
+					//if (currentDownIndex > 0)
+					//{
+					//	Type* lastRight = currentNode->GetDownNodes()[currentDownIndex - 1]->GetType();
+					//	suggestedPt.X = plane[lastRight]->TopLeft().X;
+					//}
+					//else if (!currentNode->left.back()->isStartNode() && currentNode->GetDownNodes()[0] == currentNode->left.back()->GetDownNodes().back())
+					//{
+					//	if (currentNode->left.back()->GetDownNodes().size() == 1)
+					//	{
+					//		suggestedPt.X = plane[currentNode->left.back()->GetType()]->BottomLeft().X;
+					//	}
+					//	else
+					//		suggestedPt.X = plane[currentNode->GetType()]->BottomLeft().X - 1;
+
+					//	if (plane[currentNode->left.back()->GetType()] != nullptr && 
+					//		plane[currentNode->left.back()->GetType()]->BottomRight().Y >
+					//		plane[currentNode->GetType()]->BottomLeft().Y)
+					//	{
+					//		suggestedPt.Y = plane[currentNode->left.back()->GetType()]->BottomRight().Y;
+
+					//	}
+					//}
+
+					calcSuggestedPtDown();
+					PushGoDown();
+					continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
 				}
-
-				/*if (currentDownIndex > 0)
-				{
-					auto lastBeenBottomElement = currentNode->GetDownNodes()[currentDownIndex - 1];
-					Variant* lastBottomVariant = configuration[lastBeenBottomElement->GetType()];
-						if (lastBottomVariant != nullptr)
-							pt.X += lastBottomVariant->GetWidth();
-				}*/
-
-				PushGoDown();
-				continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
+				
 			}
 		}
 		else //I can still go to the right
 		{
-			if (currentNode->GetType() == nullptr) //startNode
-			{
-				suggestedPt.X = 0; suggestedPt.Y = 0;
-			}
-			else
-			{
-				suggestedPt = pt = plane[currentNode->GetType()]->TopRight();
-				if (currentRightIndex > 0)
-				{
-					Type* lastBottom = currentNode->GetRightNodes()[currentRightIndex - 1]->GetType();
-					suggestedPt.Y = plane[lastBottom]->BottomLeft().Y;
-				}
+			//if (currentNode->GetType() == nullptr) //startNode
+			//{
+			//	suggestedPt.X = 0; suggestedPt.Y = 0;
+			//}
+			//else
+			//{
+			//	suggestedPt = pt = plane[currentNode->GetType()]->TopRight();
+			//	if (currentRightIndex > 0)
+			//	{
+			//		Type* lastBottom = currentNode->GetRightNodes()[currentRightIndex - 1]->GetType();
+			//		suggestedPt.Y = plane[lastBottom]->BottomLeft().Y;
+			//	}
 
-				//Check if the most down right is shared with the element down most right - ergo 2 on left sharing 1 on right
-				if (currentRightIndex == currentNode->GetRightNodes().size()-1)
-				{
-					GraphNode* downMostLeftTop = currentNode->GetDownNodes().back()->GetRightNodes().size() > 0 ?
-						currentNode->GetDownNodes().back()->GetRightNodes()[0] : nullptr;
+			//	//Check if the most down right is shared with the element down most right - ergo 2 on left sharing 1 on right
+			//	if (currentRightIndex == currentNode->GetRightNodes().size()-1)
+			//	{
+			//		GraphNode* downMostLeftTop = currentNode->GetDownNodes().back()->GetRightNodes().size() > 0 ?
+			//			currentNode->GetDownNodes().back()->GetRightNodes()[0] : nullptr;
 
-					if (downMostLeftTop == currentNode->GetRightNodes()[currentRightIndex])
-					{
-						//if the right is bigger than me and bottom, set normally, otherwise set as much inside me and the rest beside over bottom
+			//		if (downMostLeftTop == currentNode->GetRightNodes()[currentRightIndex]) //TODO: zobaczyæ, który bardziej wystaje i tam daæ element
+			//		{
+			//			//if the right is bigger than me and bottom, set normally, otherwise set as much inside me and the rest beside over bottom
 
-						Variant* BottomRightVar = configuration[currentNode->GetRightNodes().back()->GetType()];
-						int myRemainingHeight = plane[currentNode->GetType()]->BottomRight().Y - suggestedPt.Y;
+			//			Variant* BottomRightVar = configuration[currentNode->GetRightNodes().back()->GetType()];
+			//			int myRemainingHeight = plane[currentNode->GetType()]->BottomRight().Y - suggestedPt.Y;
 
-						if (BottomRightVar != nullptr && BottomRightVar->GetHeight() < myRemainingHeight)
-						{
-							suggestedPt.Y = plane[currentNode->GetType()]->BottomRight().Y + 1 - BottomRightVar->GetHeight();
-						}
+			//			if (BottomRightVar != nullptr && BottomRightVar->GetHeight() < myRemainingHeight && BottomRightVar->GetHeight() > 1) //TODO: maybe wihtu last cond.
+			//			{
+			//				suggestedPt.Y = plane[currentNode->GetType()]->BottomRight().Y + 1 - BottomRightVar->GetHeight();
+			//			}
 
-					}
-				}
-			}
+			//		}
+			//	}
+			//}
+
+			calcSuggestedPtRight();
 
 			PushGoRight();
 			continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
 		}
 	}
 }
+
+// CZEGO BRAKUJE:
+// Jedna z sytuacji naro¿ncyh, gdzie d³ugi na dole i dwa ma³e na górze
+// sprawdziæ, czy dzia³a poprawnie ustawianie kwadratu
 
 void RectanglePlacer::GotoParent()
 {
@@ -159,12 +180,10 @@ void RectanglePlacer::CreateRectangle()
 	{
 		if (currentNode->GetRightNodes().size() == 1)
 		{
-			rect = new VariantRectangle(var, suggestedPt.X - var->GetWidth(), pt.Y);
+			rect = new VariantRectangle(var, suggestedPt.X, pt.Y);
 		}
 		else
 		{ // is on the border
-			//use a bit moved pt
-			//TODO: calculate the better position
 			int freeSpaceUp = suggestedPt.Y - pt.Y;
 			if (freeSpaceUp > var->GetHeight())
 			{
@@ -177,7 +196,7 @@ void RectanglePlacer::CreateRectangle()
 	else
 	{
 		//use sugested pt
-		rect = new VariantRectangle(var, suggestedPt.X, suggestedPt.Y);
+		rect = new VariantRectangle(var, suggestedPt.X, suggestedPt.Y); //TODO: Problem: sometimes normal X, sometimes X - var.width
 	}
 	this->plane[currentNode->GetType()] = rect;
 }
@@ -205,6 +224,14 @@ bool RectanglePlacer::allowedToGoDown()
 	if (currentNode->GetDownNodes()[currentDownIndex]->left[0]->isStartNode()) 
 		return true;
 
+	//Bottom has a parent up that's left of current 
+	{
+		auto& UpsFromDown = currentNode->GetDownNodes()[currentDownIndex]->up;
+		auto currBottomLeft = currentNode->left.back();
+		if (UpsFromDown.back() == currentNode && UpsFromDown.size() > 1 && UpsFromDown[UpsFromDown.size() - 2] == currBottomLeft)
+			return true;
+	}
+	
 
 	/*for (auto right : parentPtrs.top().node->GetRightNodes())
 		if (currentNode->GetDownNodes()[currentDownIndex] == right)
@@ -244,6 +271,81 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 	//TODO!!! WARNING!!!: This doens't take in consideration the elements, that are on the border
 
 	return (rightVariantsHeight < nodeVariant->GetHeight() && downVariantsWidth < nodeVariant->GetWidth());
+}
+
+void RectanglePlacer::calcSuggestedPtRight()
+{
+	if (currentNode->GetType() == nullptr) //startNode
+	{
+		suggestedPt.X = 0; suggestedPt.Y = 0;
+	}
+	else
+	{
+		suggestedPt = pt = plane[currentNode->GetType()]->TopRight();
+		if (currentRightIndex > 0)
+		{
+			Type* lastBottom = currentNode->GetRightNodes()[currentRightIndex - 1]->GetType();
+			suggestedPt.Y = plane[lastBottom]->BottomLeft().Y;
+		}
+
+		//Check if the most down right is shared with the element down most right - ergo 2 on left sharing 1 on right
+		if (currentRightIndex == currentNode->GetRightNodes().size() - 1)
+		{
+			GraphNode* downMostLeftTop = currentNode->GetDownNodes().back()->GetRightNodes().size() > 0 ?
+				currentNode->GetDownNodes().back()->GetRightNodes()[0] : nullptr;
+
+			if (downMostLeftTop == currentNode->GetRightNodes()[currentRightIndex]) //TODO: zobaczyæ, który bardziej wystaje i tam daæ element
+			{
+				//if the right is bigger than me and bottom, set normally, otherwise set as much inside me and the rest beside over bottom
+
+				Variant* BottomRightVar = configuration[currentNode->GetRightNodes().back()->GetType()];
+				int myRemainingHeight = plane[currentNode->GetType()]->BottomRight().Y - suggestedPt.Y;
+
+				if (BottomRightVar != nullptr && BottomRightVar->GetHeight() < myRemainingHeight && BottomRightVar->GetHeight() > 1) //TODO: maybe wihtu last cond.
+				{
+					suggestedPt.Y = plane[currentNode->GetType()]->BottomRight().Y + 1 - BottomRightVar->GetHeight();
+				}
+
+			}
+		}
+	}
+}
+
+void RectanglePlacer::calcSuggestedPtDown()
+{
+	if (lastBottomVar != nullptr)
+	{
+		suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
+		if (configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()] != nullptr)
+			suggestedPt.X -= configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()]->GetWidth(); //Could backfire, not tested enough
+	}
+	else
+		suggestedPt = plane[currentNode->GetType()]->BottomLeft();
+
+	pt = plane[currentNode->GetType()]->BottomLeft();
+
+	if (currentDownIndex > 0)
+	{
+		Type* lastRight = currentNode->GetDownNodes()[currentDownIndex - 1]->GetType();
+		suggestedPt.X = plane[lastRight]->TopLeft().X;
+	}
+	else if (!currentNode->left.back()->isStartNode() && currentNode->GetDownNodes()[0] == currentNode->left.back()->GetDownNodes().back())
+	{
+		if (currentNode->left.back()->GetDownNodes().size() == 1)
+		{
+			suggestedPt.X = plane[currentNode->left.back()->GetType()]->BottomLeft().X;
+		}
+		else
+			suggestedPt.X = plane[currentNode->GetType()]->BottomLeft().X - 1;
+
+		if (plane[currentNode->left.back()->GetType()] != nullptr &&
+			plane[currentNode->left.back()->GetType()]->BottomRight().Y >
+			plane[currentNode->GetType()]->BottomLeft().Y)
+		{
+			suggestedPt.Y = plane[currentNode->left.back()->GetType()]->BottomRight().Y;
+
+		}
+	}
 }
 
 bool RectanglePlacer::goodConfigurationState()
