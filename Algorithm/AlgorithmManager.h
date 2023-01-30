@@ -53,8 +53,7 @@ private:
 	void ManageThreads();
 	void CalculateCostsWithMutex(std::map<Type*, Variant*> variantStack);
 
-	//void Populate_G_Graph(GraphNode* parentNode);
-	//void Populate_H_Graph(GraphNode* currentNode);
+	ResultStruct GetResults();
 };
 
 } //namespace FPA

@@ -45,6 +45,8 @@ private:
 	void calcSuggestedPtRight();
 	void calcSuggestedPtDown();
 
+	bool isAnythingIntersecting();
+
 
 public:
 	RectanglePlacer(GraphNode* start_H_Node, std::map<Type*, Variant*> variantConfiguration);
