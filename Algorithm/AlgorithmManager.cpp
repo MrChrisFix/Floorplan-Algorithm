@@ -4,10 +4,6 @@ namespace FPA {
 
 AlgorithmManager::AlgorithmManager()
 {
-	/*this->Graph_G = new GraphNode(true, true);
-	this->Graph_H = new GraphNode(true, false);
-	this->Graph_G_End = new GraphNode(false, true);
-	this->Graph_H_End = new GraphNode(false, false);*/
 	this->Graphs = new PlacementGraph();
 
 	this->bestValue = -1;
@@ -30,8 +26,6 @@ ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool mult
 	this->awaliableBufferSpace = threads;
 
 	auto start = std::chrono::system_clock::now();
-	//FixTypeConnections();		//<- deosn't work right, correct placement should be the user's responsibility
-	//PopulateGraphs();
 	this->Graphs->CreateGraph(this->types);
 
 	FindOptimal();
@@ -54,124 +48,6 @@ void AlgorithmManager::setTypes(std::vector<Type*> Types)
 	this->types = Types;
 }
 
-/*
-void AlgorithmManager::Populate_G_Graph(GraphNode* currentNode)
-{
-	auto currentType = currentNode->GetType();
-
-	if (currentType == nullptr) throw;
-
-	if (currentType->down.empty())
-	{
-		currentNode->ConnectWithNode(this->Graph_G_End);
-	}
-
-	if (currentType->up.empty())
-	{
-		this->Graph_G->ConnectWithNode(currentNode);
-		return;
-	}
-
-	for (auto up : currentType->up)
-	{
-		auto foundUp = this->Graph_G->FindNodeByType(up); //is the type upwards already in the graph?
-		if (foundUp != nullptr)
-			foundUp->ConnectWithNode(currentNode);
-		else
-		{
-			GraphNode* newUp = new GraphNode(up, true);
-			newUp->ConnectWithNode(currentNode);
-			Populate_G_Graph(newUp);
-		}
-	}
-}
-
-void AlgorithmManager::Populate_H_Graph(GraphNode* currentNode)
-{
-	auto currentType = currentNode->GetType();
-
-	if (currentType == nullptr) throw;
-
-	if (currentType->right.empty())
-	{
-		currentNode->ConnectWithNode(this->Graph_H_End);
-	}
-
-	if (currentType->left.empty())
-	{
-		this->Graph_H->ConnectWithNode(currentNode);
-		return;
-	}
-
-	for (auto left : currentType->left)
-	{
-		auto foundLeft = this->Graph_H->FindNodeByType(left); //is the type on the left already in the graph?
-		if (foundLeft != nullptr)
-			foundLeft->ConnectWithNode(currentNode);
-		else
-		{
-			GraphNode* newLeft = new GraphNode(left, false);
-			newLeft->ConnectWithNode(currentNode);
-			Populate_H_Graph(newLeft);
-		}
-	}
-}
-
-void AlgorithmManager::FixTypeConnections()
-{
-	for (auto type : this->types)
-	{
-		Type* first, * second;
-
-		if (type->right.size() < 2) 
-			continue;
-
-		//Stack top-bottom the types on the right
-		auto& right = type->right;
-		first = right[0];
-		for (int i = 1; i < right.size(); i++)
-		{
-			second = right[i];
-			first->AddRequirement('D', second, true);
-			first = second;
-		}
-
-		if (type->down.size() < 2)
-			continue;
-
-		//Stack left-right the types on the bottom
-		auto& down = type->down;
-		first = down[0];
-		for (int i = 1; i < down.size(); i++)
-		{
-			second = down[i];
-			first->AddRequirement('R', second, true);
-			first = second;
-		}
-	}
-}
-
-void AlgorithmManager::PopulateGraphs()
-{
-	for (auto type : this->types)
-	{
-		//Check if the type is already in the graphs
-		if (this->Graph_G->FindNodeByType(type) != nullptr)
-			continue;
-
-		//G Graph
-		auto newNode = new GraphNode(type, true);
-		this->Populate_G_Graph(newNode);
-
-		if (this->Graph_H->FindNodeByType(type) != nullptr)
-			continue;
-
-		//H Graph
-		newNode = new GraphNode(type, false);
-		this->Populate_H_Graph(newNode);
-	}
-}
-*/
 void AlgorithmManager::FindOptimal()
 {
 	if (this->caltulateMultithread)
