@@ -33,11 +33,12 @@ ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool mult
 
 	auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-	ResultStruct results;
+	/*ResultStruct results;
 	results.bestHeight = this->bestHeight;
 	results.bestWidth = this->bestWidth;
 	results.bestCombination = this->bestCombination;
-	results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);
+	results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);*/
+	ResultStruct results = GetResults();
 	results.time_microsec = elapsed_us;
 
 	return results;
@@ -71,7 +72,7 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*
 		auto costs = Graphs->CalculateCost(variantStack);
 		unsigned G_Value = costs.first;
 		unsigned H_Value = costs.second; 
-		if (G_Value * H_Value >= this->bestValue)
+		if (G_Value * H_Value >= this->bestValue || G_Value == -1 || H_Value == -1)
 		{
 			//variantStack.pop_back();
 			continue;
@@ -207,6 +208,28 @@ void AlgorithmManager::CalculateCostsWithMutex(std::map<Type*, Variant*> variant
 		this->bestCombination = variantStack;
 	}
 	this->guard.unlock();
+}
+
+ResultStruct AlgorithmManager::GetResults()
+{
+	ResultStruct results;
+
+	if (bestHeight == -1)
+	{
+		results.bestHeight = 0;
+		results.bestWidth = 0;
+		results.bestCombination = std::map<Type*, Variant*>();
+		results.bestPlacement = std::map<Type*, VariantRectangle*>();
+	}
+	else
+	{
+		results.bestHeight = this->bestHeight;
+		results.bestWidth = this->bestWidth;
+		results.bestCombination = this->bestCombination;
+		results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);
+	}
+
+	return results;
 }
 
 } //namespace FPA

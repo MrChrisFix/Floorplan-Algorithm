@@ -138,6 +138,11 @@ std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
 		AddRectangles();
 	}
 
+	if (isAnythingIntersecting())
+	{
+		return std::map<Type*, VariantRectangle*>();
+	}
+
 	return this->plane;
 }
 
@@ -161,15 +166,21 @@ bool RectanglePlacer::allowedToGoDown()
 
 bool RectanglePlacer::willFitAllElements(Type* type)
 {
-	//Checks if N-1 elements fit on the side, so that the N-th element can also fit and eventually be much oversized
-
 	Variant* nodeVariant = configuration[type];
 	if (nodeVariant == nullptr)
 		return true;
 
+	//The variant is invalid if it's choosen dimension is equal to 1 and has multiple parents in that choosen axis
+	if (nodeVariant->GetHeight() == 1 && (type->left.size() > 1 || type->right.size() > 1))
+		return false;
+	if (nodeVariant->GetWidth() == 1 && (type->down.size() > 1 || type->up.size() > 1))
+		return false;
 
+	//Checks if N-1 elements fit on the side, so that the N-th element can also fit and eventually be much oversized
 	int rightVariantsHeight = 0;
 	int downVariantsWidth = 0;
+	int leftVariantsHeight = 0;
+	int upVariantsWidth = 0;
 	for (int i=0; i< type->right.size()-2 && type->right.size() > 1; i++)
 	{
 		Variant* var = configuration[type->right[i]];
@@ -178,7 +189,7 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 			rightVariantsHeight += var->GetHeight();
 		}
 	}
-	for (int i=0; i< type->down.size()-2 && type->down.size() >1; i++)
+	for (int i=0; i< type->down.size()-2 && type->down.size() > 1; i++)
 	{
 		Variant* var = configuration[type->down[i]];
 		if (var != nullptr)
@@ -186,12 +197,38 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 			downVariantsWidth += var->GetWidth();
 		}
 	}
+	for (int i = 0; i < type->left.size() - 2 && type->left.size() > 1; i++)
+	{
+		Variant* var = configuration[type->left[i]];
+		if (var != nullptr)
+		{
+			leftVariantsHeight += var->GetWidth();
+		}
+	}
+	for (int i = 0; i < type->up.size() - 2 && type->up.size() > 1; i++)
+	{
+		Variant* var = configuration[type->up[i]];
+		if (var != nullptr)
+		{
+			upVariantsWidth += var->GetWidth();
+		}
+	}
 
-	//TODO!!! WARNING!!!: This doens't take in consideration the elements, that are on the border
+	bool upGood = type->up.size() == 2 && upVariantsWidth > nodeVariant->GetWidth() ||
+		upVariantsWidth < nodeVariant->GetWidth();
 
-	//TODO: another test: if dimension is sizeof 1 and mus be on the border
+	bool downGood = type->down.size() == 2 && downVariantsWidth > nodeVariant->GetWidth() ||
+		downVariantsWidth < nodeVariant->GetWidth();
 
-	return (rightVariantsHeight < nodeVariant->GetHeight() && downVariantsWidth < nodeVariant->GetWidth());
+	bool leftGood = type->left.size() == 2 && leftVariantsHeight > nodeVariant->GetHeight() ||
+		leftVariantsHeight < nodeVariant->GetHeight();
+
+	bool rightGood = type->right.size() == 2 && rightVariantsHeight > nodeVariant->GetHeight() ||
+		rightVariantsHeight < nodeVariant->GetHeight();
+
+	//TODO!!!: This doens't take in consideration the elements, that are on the border
+
+	return (upGood && downGood && leftGood && rightGood);
 }
 
 void RectanglePlacer::calcSuggestedPtRight()
@@ -267,6 +304,23 @@ void RectanglePlacer::calcSuggestedPtDown()
 
 		}
 	}
+}
+
+bool RectanglePlacer::isAnythingIntersecting()
+{
+	for (auto& tested : plane)
+	{
+		for (auto& rect : plane)
+		{
+			if (tested == rect)
+				continue;
+			if (tested.second->isIntersecting(rect.second))
+				return true;
+		}
+	}
+
+
+	return false;
 }
 
 bool RectanglePlacer::goodConfigurationState()

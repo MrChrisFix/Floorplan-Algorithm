@@ -120,6 +120,11 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Variant*> configuration)
 {
 	std::map<Type*, VariantRectangle*> rectanglePlane = GetRectanglePlane(configuration);
+	if (rectanglePlane.empty())
+	{
+		return std::pair<unsigned, unsigned>(-1, -1);
+	}
+
 
 	auto G = this->calculateGGraph(rectanglePlane);
 	auto H = this->calculateHGraph(rectanglePlane);
