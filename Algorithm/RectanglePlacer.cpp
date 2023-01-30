@@ -27,8 +27,6 @@ void RectanglePlacer::AddRectangles()
 
 		if (currentNode->GetRightNodes().size() <= currentRightIndex || currentNode->GetRightNodes()[0]->isEndNode()) //Did all elements on the right
 		{
-			lastBottomVar = currentNode->GetRightNodes()[currentNode->GetRightNodes().size() - 1];
-
 			//Go down
 			if (currentNode->GetDownNodes().size() <= currentDownIndex || currentNode->GetDownNodes()[0]->isEndNode()) //Also did everything down
 			{//In this case I should go back to the parent
@@ -43,22 +41,33 @@ void RectanglePlacer::AddRectangles()
 			{
 				if (!allowedToGoDown())
 				{
+					lastBottomVar = currentNode;
 					GotoParent();
 					continue; //<- this continue could be useless, becouse without it goes anyway to the end of the loop
 				}
 
-				lastBottomVar = currentNode->GetRightNodes().back();
-				//TODO
-				suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
+				//TODO: better down calculations
+				//lastBottomVar = currentNode->GetRightNodes().back();
+				if(lastBottomVar != nullptr)
+					suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
+				else
+					suggestedPt = plane[currentNode->GetType()]->BottomLeft();
 
 				pt = plane[currentNode->GetType()]->BottomLeft();
+
 				if (currentDownIndex > 0)
+				{
+					Type* lastRight = currentNode->GetDownNodes()[currentDownIndex - 1]->GetType();
+					suggestedPt.X = plane[lastRight]->TopLeft().X;
+				}
+
+				/*if (currentDownIndex > 0)
 				{
 					auto lastBeenBottomElement = currentNode->GetDownNodes()[currentDownIndex - 1];
 					Variant* lastBottomVariant = configuration[lastBeenBottomElement->GetType()];
 						if (lastBottomVariant != nullptr)
-							pt.Y += lastBottomVariant->GetWidth();
-				}
+							pt.X += lastBottomVariant->GetWidth();
+				}*/
 
 				PushGoDown();
 				continue; //<- this continue is useless, becouse without it goes anyway to the end of the loop
@@ -79,10 +88,12 @@ void RectanglePlacer::AddRectangles()
 					suggestedPt.Y = plane[lastBottom]->BottomLeft().Y;
 				}
 
-				//Check if the most down right is shared with the element down most right
+				//Check if the most down right is shared with the element down most right - ergo 2 on left sharing 1 on right
 				if (currentRightIndex == currentNode->GetRightNodes().size()-1)
 				{
-					auto downMostLeftTop = currentNode->GetDownNodes().back()->GetRightNodes()[0];
+					GraphNode* downMostLeftTop = currentNode->GetDownNodes().back()->GetRightNodes().size() > 0 ?
+						currentNode->GetDownNodes().back()->GetRightNodes()[0] : nullptr;
+
 					if (downMostLeftTop == currentNode->GetRightNodes()[currentRightIndex])
 					{
 						//if the right is bigger than me and bottom, set normally, otherwise set as much inside me and the rest beside over bottom
@@ -154,13 +165,19 @@ void RectanglePlacer::CreateRectangle()
 		{ // is on the border
 			//use a bit moved pt
 			//TODO: calculate the better position
-			rect = new VariantRectangle(var, suggestedPt.X, suggestedPt.Y);
+			int freeSpaceUp = suggestedPt.Y - pt.Y;
+			if (freeSpaceUp > var->GetHeight())
+			{
+				rect = new VariantRectangle(var, suggestedPt.X - var->GetWidth(), suggestedPt.Y + 1 - var->GetHeight());
+			}
+			else
+				rect = new VariantRectangle(var, suggestedPt.X - var->GetWidth(), pt.Y);
 		}
 	}
 	else
 	{
 		//use sugested pt
-		rect = new VariantRectangle(var, suggestedPt.X - var->GetWidth(), suggestedPt.Y);
+		rect = new VariantRectangle(var, suggestedPt.X, suggestedPt.Y);
 	}
 	this->plane[currentNode->GetType()] = rect;
 }
@@ -175,6 +192,7 @@ std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
 {
 	if (goodConfigurationState())
 	{
+		currentNode = startNode;
 		AddRectangles();
 	}
 
@@ -184,7 +202,7 @@ std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
 bool RectanglePlacer::allowedToGoDown()
 {	
 	//The Element can be considered if the it has nothing on the left, bc otherwise the created later rectangle would be in the wrong place
-	if (currentNode->GetDownNodes()[currentDownIndex]->left[0]->isEndNode()) 
+	if (currentNode->GetDownNodes()[currentDownIndex]->left[0]->isStartNode()) 
 		return true;
 
 
@@ -206,7 +224,7 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 
 	int rightVariantsHeight = 0;
 	int downVariantsWidth = 0;
-	for (int i=0; i< type->right.size()-2; i++)
+	for (int i=0; i< type->right.size()-2 && type->right.size() > 1; i++)
 	{
 		Variant* var = configuration[type->right[i]];
 		if (var != nullptr)
@@ -214,7 +232,7 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 			rightVariantsHeight += var->GetHeight();
 		}
 	}
-	for (int i=0; i< type->down.size()-2; i++)
+	for (int i=0; i< type->down.size()-2 && type->down.size() >1; i++)
 	{
 		Variant* var = configuration[type->down[i]];
 		if (var != nullptr)
@@ -223,7 +241,7 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 		}
 	}
 
-	TODO: This doens't take in consideration the elements, that are on the border
+	//TODO!!! WARNING!!!: This doens't take in consideration the elements, that are on the border
 
 	return (rightVariantsHeight < nodeVariant->GetHeight() && downVariantsWidth < nodeVariant->GetWidth());
 }
