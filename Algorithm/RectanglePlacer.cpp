@@ -7,6 +7,7 @@ void RectanglePlacer::AddRectangles()
 {
 	while (true)
 	{
+		counter++;
 		if (!currentNode->isStartNode())
 		{
 			if (this->plane[currentNode->GetType()] != nullptr) // this element already exists on the plane
@@ -140,6 +141,11 @@ std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
 
 	if (isAnythingIntersecting())
 	{
+		for (auto& el : plane)
+		{
+			delete el.second;
+			el.second = nullptr;
+		}
 		return std::map<Type*, VariantRectangle*>();
 	}
 
@@ -240,6 +246,7 @@ void RectanglePlacer::calcSuggestedPtRight()
 	else
 	{
 		suggestedPt = pt = plane[currentNode->GetType()]->TopRight();
+
 		if (currentRightIndex > 0)
 		{
 			Type* lastBottom = currentNode->GetRightNodes()[currentRightIndex - 1]->GetType();
@@ -264,6 +271,22 @@ void RectanglePlacer::calcSuggestedPtRight()
 					suggestedPt.Y = plane[currentNode->GetType()]->BottomRight().Y + 1 - BottomRightVar->GetHeight();
 				}
 
+				int bottomElementsWidth = 0;
+				for (auto el : currentNode->GetDownNodes())
+				{
+					if(configuration[el->GetType()] != nullptr)
+						bottomElementsWidth += configuration[el->GetType()]->GetWidth();
+				}
+				if (configuration[currentNode->GetType()] != nullptr && bottomElementsWidth > configuration[currentNode->GetType()]->GetWidth())
+				{
+					int delta = bottomElementsWidth - configuration[currentNode->GetType()]->GetWidth();
+
+					if (!currentNode->left.back()->down.empty() && currentNode->left.back()->down.back() == currentNode->down.front()) //If the bottom item is shared with one on the left
+						delta--;
+
+					suggestedPt.X = plane[currentNode->GetType()]->BottomRight().X + delta;
+				}
+
 			}
 		}
 	}
@@ -271,11 +294,11 @@ void RectanglePlacer::calcSuggestedPtRight()
 
 void RectanglePlacer::calcSuggestedPtDown()
 {
-	if (lastBottomVar != nullptr)
+	if (lastBottomVar != nullptr && lastBottomVar != currentNode->up.front())
 	{
 		suggestedPt = plane[lastBottomVar->GetType()]->BottomLeft();
 		if (configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()] != nullptr)
-			suggestedPt.X -= configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()]->GetWidth(); //Could backfire, not tested enough
+			suggestedPt.X -= configuration[currentNode->GetDownNodes()[currentDownIndex]->GetType()]->GetWidth(); //Unsure if it's good
 	}
 	else
 		suggestedPt = plane[currentNode->GetType()]->BottomLeft();

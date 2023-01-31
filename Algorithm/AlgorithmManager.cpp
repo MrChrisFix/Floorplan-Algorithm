@@ -19,7 +19,7 @@ AlgorithmManager::~AlgorithmManager()
 	delete this->Graphs;
 }
 
-ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool multiThread)
+ResultStruct* AlgorithmManager::StartCalculations(unsigned int threads, bool multiThread)
 {
 	this->caltulateMultithread = multiThread;
 	this->threadNum = threads;
@@ -38,8 +38,8 @@ ResultStruct AlgorithmManager::StartCalculations(unsigned int threads, bool mult
 	results.bestWidth = this->bestWidth;
 	results.bestCombination = this->bestCombination;
 	results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);*/
-	ResultStruct results = GetResults();
-	results.time_microsec = elapsed_us;
+	ResultStruct* results = GetResults();
+	results->time_microsec = elapsed_us;
 
 	return results;
 }
@@ -66,20 +66,25 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*
 {
 	for (auto variant : this->types[depth]->GetVariants())
 	{
-		//variantStack.push_back(variant);
 		variantStack[types[depth]] = variant;
 
-		auto costs = Graphs->CalculateCost(variantStack);
-		unsigned G_Value = costs.first;
-		unsigned H_Value = costs.second; 
-		if (G_Value * H_Value >= this->bestValue || G_Value == -1 || H_Value == -1)
-		{
-			//variantStack.pop_back();
-			continue;
-		}
+		////Branch and bound sadly cannot be applied///
+		//auto costs = Graphs->CalculateCost(variantStack);
+		//unsigned G_Value = costs.first;
+		//unsigned H_Value = costs.second; 
+		//if (G_Value * H_Value >= this->bestValue || G_Value == -1 || H_Value == -1)
+		//{
+		//	//variantStack.pop_back();
+		//	continue;
+		//}
 
 		if (depth == this->types.size() - 1) //Leaf
 		{
+			//Here instead of branch and bound
+			auto costs = Graphs->CalculateCost(variantStack);
+			unsigned G_Value = costs.first;
+			unsigned H_Value = costs.second; 
+			if (H_Value == -1) continue;
 			if (G_Value * H_Value < this->bestValue)
 			{
 				this->bestValue = G_Value * H_Value;
@@ -92,8 +97,6 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*
 		{
 			FindSinglethread(depth + 1, variantStack); // Going deeper into the "tree"
 		}
-
-		//variantStack.pop_back();
 	}
 	variantStack.erase(types[depth]);
 }
@@ -210,24 +213,24 @@ void AlgorithmManager::CalculateCostsWithMutex(std::map<Type*, Variant*> variant
 	this->guard.unlock();
 }
 
-ResultStruct AlgorithmManager::GetResults()
+ResultStruct* AlgorithmManager::GetResults()
 {
-	ResultStruct results;
+	ResultStruct* results = new ResultStruct();
 
 	if (bestHeight == -1)
 	{
-		results.bestHeight = 0;
-		results.bestWidth = 0;
-		results.bestCombination = std::map<Type*, Variant*>();
-		results.bestPlacement = std::map<Type*, VariantRectangle*>();
+		results->bestHeight = 0;
+		results->bestWidth = 0;
+		results->bestCombination = std::map<Type*, Variant*>();
+		results->bestPlacement = std::map<Type*, VariantRectangle*>();
 	}
 	else
 	{
-		results.bestHeight = this->bestHeight;
-		results.bestWidth = this->bestWidth;
-		results.bestCombination = this->bestCombination;
-		results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);
-	}
+		results->bestHeight = this->bestHeight;
+		results->bestWidth = this->bestWidth;
+		results->bestCombination = this->bestCombination;
+		results->bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);
+	}		   
 
 	return results;
 }

@@ -12,13 +12,13 @@ PlacementGraph::PlacementGraph()
 
 PlacementGraph::~PlacementGraph()
 {
-	if (G_start != nullptr)
-		delete G_start;
-	//G_end should be deleted by G_start
 	if (H_start != nullptr)
 		delete H_start;
-	if (H_end != nullptr)
-		delete H_end;
+	//H_end should be deleted by H_start
+	if (G_start != nullptr)
+		delete G_start;
+	if (G_end != nullptr)
+		delete G_end;
 }
 
 unsigned PlacementGraph::calculateGGraph(std::map<Type*, VariantRectangle*>& plane)
