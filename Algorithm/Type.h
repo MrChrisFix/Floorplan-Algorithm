@@ -13,6 +13,8 @@ private:
 
 	std::string name;				/// Only for cosmetic purposes
 
+	void RemoveAllRequirements();
+
 public:
 	Type(std::string typeName);
 	~Type();

@@ -1,7 +1,29 @@
 #include "Type.h"
+#include <algorithm>
 
 namespace FPA {
 
+
+void Type::RemoveAllRequirements()
+{
+	for (auto& req : this->up)
+	{
+		RemoveRequirement(req, true);
+	}
+	for (auto& req : this->left)
+	{
+		RemoveRequirement(req, true);
+	}
+	for (auto& req : this->down)
+	{
+		RemoveRequirement(req, true);
+	}
+	for (auto& req : this->right)
+	{
+		RemoveRequirement(req, true);
+	}
+
+}
 Type::Type(std::string typeName)
 {
 	this->name = typeName;
@@ -15,6 +37,7 @@ Type::~Type()
 		varinat = nullptr;
 	}
 	this->variants.clear();
+	this->RemoveAllRequirements();
 }
 
 void Type::setName(std::string newName)
