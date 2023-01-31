@@ -63,9 +63,9 @@ void TimeTester::MultipleTypesConstVaraint(int typesMin, int typesMax, int varia
 	for (int currentTypeAmount = typesMin; currentTypeAmount <= typesMax; currentTypeAmount++)
 	{
 		manager.setTypes(types);
-		ResultStruct result = manager.StartCalculations(1, false);
+		ResultStruct* result = manager.StartCalculations(1, false);
 
-		times.push_back(std::pair<int, long long>(currentTypeAmount, result.time_microsec));
+		times.push_back(std::pair<int, long long>(currentTypeAmount, result->time_microsec));
 
 		Type* newType = new Type(std::to_string(currentTypeAmount));
 
@@ -90,9 +90,9 @@ void TimeTester::ConstTypesMultipleVariants(int typesAmount, int variantsMin, in
 	for (int currentVarAmount = variantsMin; currentVarAmount <= variantsMax; currentVarAmount++)
 	{
 		manager.setTypes(types);
-		ResultStruct result = manager.StartCalculations(1, false);
+		ResultStruct* result = manager.StartCalculations(1, false);
 
-		times.push_back(std::pair<int, long long>(currentVarAmount, result.time_microsec));
+		times.push_back(std::pair<int, long long>(currentVarAmount, result->time_microsec));
 
 		for(auto& t : types)
 			t->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);

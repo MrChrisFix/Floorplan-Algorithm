@@ -14,6 +14,17 @@ struct ResultStruct
     std::map<Type*, Variant*> bestCombination;
     std::map<Type*, VariantRectangle*> bestPlacement;
     long long time_microsec = -1;
+
+    ~ResultStruct()
+    {
+        for (auto& el : bestPlacement)
+        {
+            delete el.second;
+            el.second = nullptr;
+        }
+        bestPlacement.clear();
+        bestCombination.clear();
+    }
 };
 
 } //namespace FPA

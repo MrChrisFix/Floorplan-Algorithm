@@ -15,9 +15,6 @@ class AlgorithmManager
 {
 private:
 	std::vector<Type*> types;
-
-	//GraphNode *Graph_G, *Graph_H;
-	//GraphNode *Graph_G_End, *Graph_H_End;
 	PlacementGraph* Graphs;
 
 	//Calc
@@ -40,12 +37,10 @@ public:
 	AlgorithmManager();
 	~AlgorithmManager();
 
-	ResultStruct StartCalculations(unsigned int threads, bool multiThread = false);
+	ResultStruct* StartCalculations(unsigned int threads, bool multiThread = false);
 	void setTypes(std::vector<Type*> Types);
 
 private:
-	//void FixTypeConnections();
-	//void PopulateGraphs();
 	void FindOptimal();
 
 	void FindSinglethread(unsigned depth, std::map<Type*, Variant*> variantStack);
@@ -53,7 +48,7 @@ private:
 	void ManageThreads();
 	void CalculateCostsWithMutex(std::map<Type*, Variant*> variantStack);
 
-	ResultStruct GetResults();
+	ResultStruct* GetResults();
 };
 
 } //namespace FPA

@@ -96,5 +96,10 @@ bool VariantRectangle::isOtherBySide(VariantRectangle* other, SIDE side)
 	return X && Y;
 }
 
+Variant* VariantRectangle::GetVariant()
+{
+	return this->_variant;
+}
+
 
 } //namespace FPA
