@@ -17,8 +17,6 @@ private:
 		Parent(GraphNode* nodeptr, int nextRight, int nextDown) : node(nodeptr), rightIndex(nextRight), downIndex(nextDown) {};
 	};
 
-	int counter = 0;
-
 	std::map<Type*, VariantRectangle*> plane;
 	GraphNode* startNode = nullptr;
 	std::map<Type*, Variant*> configuration;
