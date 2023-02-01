@@ -57,6 +57,52 @@ unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& pla
 	return Hmax - Hmin;
 }
 
+unsigned PlacementGraph::calculateUncompleteGGraph(std::map<Type*, Variant*>& configuration, GraphNode* startNode)
+{
+	if (startNode->isEndNode())
+		return 0;
+
+	unsigned max = 0;
+	for (auto& node : startNode->down)
+	{
+		unsigned myCost = 0;
+		if (!node->isStartNode())
+		{
+			Variant* var = configuration[node->GetType()];
+			if(var != nullptr)
+				myCost = var->GetHeight();
+		}
+		int cost = calculateUncompleteGGraph(configuration, node) + myCost;
+		if (cost > max)
+			max = cost;
+	}
+
+	return max;
+}
+
+unsigned PlacementGraph::calculateUncompleteHGraph(std::map<Type*, Variant*>& configuration, GraphNode* startNode)
+{
+	if (startNode->isEndNode())
+		return 0;
+
+	unsigned max = 0;
+	for (auto& node : startNode->right)
+	{
+		unsigned myCost = 0;
+		if (!node->isStartNode())
+		{
+			Variant* var = configuration[node->GetType()];
+			if (var != nullptr)
+				myCost = var->GetWidth();
+		}
+		int cost = calculateUncompleteHGraph(configuration, node) + myCost;
+		if (cost > max)
+			max = cost;
+	}
+
+	return max;
+}
+
 void PlacementGraph::changeOrdersOnSites()
 {
 	for (auto& graph : this->TypeLookup)
@@ -238,17 +284,33 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 	changeOrdersOnSites();
 }
 
-std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Variant*> configuration)
+std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Variant*> &configuration)
 {
-	std::map<Type*, VariantRectangle*> rectanglePlane = GetRectanglePlane(configuration);
-	if (rectanglePlane.empty())
+	unsigned G = -1, H = -1;
+	if (configuration.size() < TypeLookup.size())
 	{
-		return std::pair<unsigned, unsigned>(-1, -1);
+		auto copy = configuration; //The copy is added, becouse the conf is passed by reference (for speed) and is obscured by it
+		G = this->calculateUncompleteGGraph(copy, G_start);
+		H = this->calculateUncompleteHGraph(copy, H_start);
 	}
+	else
+	{
+		std::map<Type*, VariantRectangle*> rectanglePlane = GetRectanglePlane(configuration);
+		if (rectanglePlane.empty())
+		{
+			G = -1;
+			H = -1;
+		}
+		else
+		{
+			G = this->calculateGGraph(rectanglePlane);
+			H = this->calculateHGraph(rectanglePlane);
 
+			for (auto& rect : rectanglePlane)
+				delete rect.second;
+		}
 
-	auto G = this->calculateGGraph(rectanglePlane);
-	auto H = this->calculateHGraph(rectanglePlane);
+	}
 
 	return std::pair<unsigned, unsigned>(G, H);
 }
