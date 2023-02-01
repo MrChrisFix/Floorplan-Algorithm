@@ -57,6 +57,125 @@ unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& pla
 	return Hmax - Hmin;
 }
 
+void PlacementGraph::changeOrdersOnSites()
+{
+	for (auto& graph : this->TypeLookup)
+	{
+		if(graph.second->up.size() > 1)
+		{
+			correctTopBottom(graph.second, graph.second->up);
+		}
+
+		if(graph.second->left.size() > 1)
+		{
+			correctLeftRight(graph.second, graph.second->left);
+		}
+
+		if (graph.second->down.size() > 1)
+		{
+			correctTopBottom(graph.second, graph.second->down);
+		}
+
+		if (graph.second->right.size() > 1)
+		{
+			correctLeftRight(graph.second, graph.second->right);
+		}
+	}
+
+}
+
+void PlacementGraph::correctLeftRight(GraphNode* node, std::vector<GraphNode*>& dirVec)
+{
+	std::vector<GraphNode*> newVec;
+
+	//1. Find the first
+	for (int i = 0; i < dirVec.size(); i++)
+	{
+		bool found = true;
+		auto current = dirVec[i];
+
+		for (auto& di : dirVec)
+		{
+			auto id = std::find(current->up.begin(), current->up.end(), di);
+			if (id != current->up.end())
+			{
+				found = false;
+				break;
+			}
+		}
+		if (found)
+		{
+			newVec.push_back(current);
+			break;
+		}
+	}
+
+	// 2. Traverse now having an anchor point
+	for (int i = 0; i < dirVec.size()-1; )
+	{
+		int old_i = i;
+		for (auto& di : dirVec)
+		{
+			auto id = std::find(di->up.begin(), di->up.end(), newVec[i]);
+			if (id != di->up.end())
+			{
+				newVec.push_back(di);
+				i++;
+				break;
+			}
+		}
+		if (i == old_i)
+			throw "Elements are not connected near element " + node->GetType()->GetName();
+	}
+	dirVec = newVec;
+}
+
+void PlacementGraph::correctTopBottom(GraphNode* node, std::vector<GraphNode*> &dirVec)
+{
+	std::vector<GraphNode*> newVec;
+
+	//1. Find the first
+	for (int i = 0; i < dirVec.size(); i++)
+	{
+		bool found = true;
+		auto current = dirVec[i];
+
+		for (auto& di : dirVec)
+		{
+			auto id = std::find(current->left.begin(), current->left.end(), di);
+			if (id != current->left.end())
+			{
+				found = false;
+				break;
+			}
+		}
+		if (found)
+		{
+			newVec.push_back(current);
+			break;
+		}
+	}
+
+	// 2. Traverse now having an anchor point
+	for (int i = 0; i < dirVec.size()-1; )
+	{
+		int old_i = i;
+		for (auto& di : dirVec)
+		{
+			auto id = std::find(di->left.begin(), di->left.end(), newVec[i]);
+			if (id != di->left.end())
+			{
+				newVec.push_back(di);
+				i++;
+				break;
+			}
+		}
+		if (i == old_i)
+			throw "Elements are not connected near element " + node->GetType()->GetName();
+	}
+	dirVec = newVec;
+}
+
 void PlacementGraph::CreateGraph(std::vector<Type*> types)
 {
 	if (types.empty()) 
@@ -115,6 +234,8 @@ void PlacementGraph::CreateGraph(std::vector<Type*> types)
 		if (type->up.empty())
 			node->ConnectWithNode(G_start, SIDE::UP);
 	}
+
+	changeOrdersOnSites();
 }
 
 std::pair<unsigned, unsigned> PlacementGraph::CalculateCost(std::map<Type*, Variant*> configuration)

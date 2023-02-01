@@ -7,7 +7,6 @@ void RectanglePlacer::AddRectangles()
 {
 	while (true)
 	{
-		counter++;
 		if (!currentNode->isStartNode())
 		{
 			if (this->plane[currentNode->GetType()] != nullptr) // this element already exists on the plane

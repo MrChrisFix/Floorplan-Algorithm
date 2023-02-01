@@ -15,6 +15,10 @@ private:
 	unsigned calculateGGraph(std::map<Type*, VariantRectangle*> &plane);
 	unsigned calculateHGraph(std::map<Type*, VariantRectangle*> &plane);
 
+	void changeOrdersOnSites();
+	void correctLeftRight(GraphNode* node, std::vector<GraphNode*>& dirVec);
+	void correctTopBottom(GraphNode* node, std::vector<GraphNode*> &dirVec);
+
 public:
 	PlacementGraph();
 	~PlacementGraph();
