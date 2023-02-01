@@ -107,15 +107,15 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 	{
 		variantStack[types[depth]] = variant;
 
-		auto costs = Graphs->CalculateCost(variantStack);
-		unsigned G_Value = costs.first;
-		unsigned H_Value = costs.second;
+		//auto costs = Graphs->CalculateCost(variantStack);
+		//unsigned G_Value = costs.first;
+		//unsigned H_Value = costs.second;
 
-		if (G_Value * H_Value >= this->bestValue)
-		{
-			//variantStack.pop_back();
-			continue;
-		}
+		//if (G_Value * H_Value >= this->bestValue)
+		//{
+		//	//variantStack.pop_back();
+		//	continue;
+		//}
 
 
 		if (depth == this->types.size() - 1) //Leaf
@@ -130,7 +130,6 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 				awaliableBufferSpace--;
 				this->WorkToDo.push_back(std::pair<int, std::map<Type*, Variant*>>(depth+1, variantStack));
 				this->bufferSizeGuard.unlock();
-				//variantStack.pop_back();
 				continue;
 			}
 			else
@@ -139,7 +138,6 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 				FindMultithread(depth + 1, variantStack); // Going deeper into the "tree"
 			}
 		}
-		//variantStack.pop_back();
 	}
 }
 
@@ -203,7 +201,7 @@ void AlgorithmManager::CalculateCostsWithMutex(std::map<Type*, Variant*> variant
 	auto value = G_Value * H_Value;
 
 	this->guard.lock();
-	if (this->bestValue > value)
+	if (this->bestValue > value && H_Value != -1)
 	{
 		this->bestValue = value;
 		this->bestHeight = G_Value;
