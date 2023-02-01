@@ -33,11 +33,6 @@ ResultStruct* AlgorithmManager::StartCalculations(unsigned int threads, bool mul
 
 	auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-	/*ResultStruct results;
-	results.bestHeight = this->bestHeight;
-	results.bestWidth = this->bestWidth;
-	results.bestCombination = this->bestCombination;
-	results.bestPlacement = this->Graphs->GetRectanglePlane(this->bestCombination);*/
 	ResultStruct* results = GetResults();
 	results->time_microsec = elapsed_us;
 
@@ -69,14 +64,13 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*
 		variantStack[types[depth]] = variant;
 
 		////Branch and bound sadly cannot be applied///
-		//auto costs = Graphs->CalculateCost(variantStack);
-		//unsigned G_Value = costs.first;
-		//unsigned H_Value = costs.second; 
-		//if (G_Value * H_Value >= this->bestValue || G_Value == -1 || H_Value == -1)
-		//{
-		//	//variantStack.pop_back();
-		//	continue;
-		//}
+		/*auto costs = Graphs->CalculateCost(variantStack);
+		unsigned G_Value = costs.first;
+		unsigned H_Value = costs.second; 
+		if (G_Value * H_Value >= this->bestValue || G_Value == -1 || H_Value == -1)
+		{
+			continue;
+		}*/
 
 		if (depth == this->types.size() - 1) //Leaf
 		{
@@ -107,19 +101,27 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 	{
 		variantStack[types[depth]] = variant;
 
-		//auto costs = Graphs->CalculateCost(variantStack);
-		//unsigned G_Value = costs.first;
-		//unsigned H_Value = costs.second;
-
-		//if (G_Value * H_Value >= this->bestValue)
-		//{
-		//	//variantStack.pop_back();
-		//	continue;
-		//}
+		/*auto costs = Graphs->CalculateCost(variantStack);
+		unsigned G_Value = costs.first;
+		unsigned H_Value = costs.second;
+		if (G_Value * H_Value >= this->bestValue || H_Value == -1)
+		{
+			continue;
+		}*/
 
 
 		if (depth == this->types.size() - 1) //Leaf
 		{
+			/*auto cost = G_Value * H_Value;
+			this->guard.lock();
+			if (this->bestValue > cost && H_Value != -1)
+			{
+				this->bestValue = cost;
+				this->bestHeight = G_Value;
+				this->bestWidth = H_Value;
+				this->bestCombination = variantStack;
+			}
+			this->guard.unlock();*/
 			CalculateCostsWithMutex(variantStack);
 		}
 		else if (depth < this->types.size())
@@ -139,6 +141,7 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 			}
 		}
 	}
+	variantStack.erase(types[depth]);
 }
 
 void AlgorithmManager::ManageThreads()
@@ -163,10 +166,10 @@ void AlgorithmManager::ManageThreads()
 			ThreadPool.push_back(
 				std::async(
 					std::launch::async, [this, depth, stack] {this->FindMultithread(depth, stack); }));
-			WorkToDo.pop_front();
-			avaliableThreads--;
 
+			avaliableThreads--;
 			this->bufferSizeGuard.lock();
+			WorkToDo.pop_front();
 			this->awaliableBufferSpace++;
 			this->bufferSizeGuard.unlock();
 		}
