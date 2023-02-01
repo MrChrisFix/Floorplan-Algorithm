@@ -15,6 +15,9 @@ private:
 	unsigned calculateGGraph(std::map<Type*, VariantRectangle*> &plane);
 	unsigned calculateHGraph(std::map<Type*, VariantRectangle*> &plane);
 
+	unsigned calculateUncompleteGGraph(std::map<Type*, Variant*>& configuration, GraphNode* startNode);
+	unsigned calculateUncompleteHGraph(std::map<Type*, Variant*>& configuration, GraphNode* startNode);
+
 	void changeOrdersOnSites();
 	void correctLeftRight(GraphNode* node, std::vector<GraphNode*>& dirVec);
 	void correctTopBottom(GraphNode* node, std::vector<GraphNode*> &dirVec);
@@ -25,7 +28,7 @@ public:
 
 	void CreateGraph(std::vector<Type*> types);
 
-	std::pair<unsigned, unsigned> CalculateCost(std::map<Type*, Variant*> configuration);
+	std::pair<unsigned, unsigned> CalculateCost(std::map<Type*, Variant*> &configuration);
 
 	std::map<Type*, VariantRectangle*> GetRectanglePlane(std::map<Type*, Variant*> configuration);
 };

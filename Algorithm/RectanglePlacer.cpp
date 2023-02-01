@@ -129,28 +129,6 @@ RectanglePlacer::~RectanglePlacer()
 	this->startNode = nullptr;
 }
 
-
-std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
-{
-	if (goodConfigurationState())
-	{
-		currentNode = startNode;
-		AddRectangles();
-	}
-
-	if (isAnythingIntersecting())
-	{
-		for (auto& el : plane)
-		{
-			delete el.second;
-			el.second = nullptr;
-		}
-		return std::map<Type*, VariantRectangle*>();
-	}
-
-	return this->plane;
-}
-
 bool RectanglePlacer::allowedToGoDown()
 {	
 	//The Element can be considered if the it has nothing on the left, bc otherwise the created later rectangle would be in the wrong place
@@ -327,6 +305,28 @@ void RectanglePlacer::calcSuggestedPtDown()
 		}
 	}
 }
+
+std::map<Type*, VariantRectangle*> RectanglePlacer::GetPlacedRectangles()
+{
+	if (goodConfigurationState())
+	{
+		currentNode = startNode;
+		AddRectangles();
+	}
+
+	if (isAnythingIntersecting())
+	{
+		for (auto& el : plane)
+		{
+			delete el.second;
+			el.second = nullptr;
+		}
+		return std::map<Type*, VariantRectangle*>();
+	}
+
+	return this->plane;
+}
+
 
 bool RectanglePlacer::isAnythingIntersecting()
 {
