@@ -20,7 +20,7 @@ private:
 	std::map<Type*, VariantRectangle*> plane;
 	GraphNode* startNode = nullptr;
 	std::map<Type*, Variant*> configuration;
-	Variant* blankVariant = nullptr; //TODO: somehow manage memory of this object
+	Variant* blankVariant = nullptr;
 	GraphNode* lastBottomVar = nullptr;
 
 	//Managing

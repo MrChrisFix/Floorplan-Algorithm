@@ -63,22 +63,16 @@ void AlgorithmManager::FindSinglethread(unsigned depth, std::map<Type*, Variant*
 	{
 		variantStack[types[depth]] = variant;
 
-		////Branch and bound sadly cannot be applied///
-		/*auto costs = Graphs->CalculateCost(variantStack);
+		auto costs = Graphs->CalculateCost(variantStack);
 		unsigned G_Value = costs.first;
 		unsigned H_Value = costs.second; 
 		if (G_Value * H_Value >= this->bestValue || G_Value == -1 || H_Value == -1)
 		{
 			continue;
-		}*/
+		}
 
 		if (depth == this->types.size() - 1) //Leaf
 		{
-			//Here instead of branch and bound
-			auto costs = Graphs->CalculateCost(variantStack);
-			unsigned G_Value = costs.first;
-			unsigned H_Value = costs.second; 
-			if (H_Value == -1) continue;
 			if (G_Value * H_Value < this->bestValue)
 			{
 				this->bestValue = G_Value * H_Value;
@@ -101,27 +95,17 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 	{
 		variantStack[types[depth]] = variant;
 
-		/*auto costs = Graphs->CalculateCost(variantStack);
+		auto costs = Graphs->CalculateCost(variantStack);
 		unsigned G_Value = costs.first;
 		unsigned H_Value = costs.second;
 		if (G_Value * H_Value >= this->bestValue || H_Value == -1)
 		{
 			continue;
-		}*/
+		}
 
 
 		if (depth == this->types.size() - 1) //Leaf
 		{
-			/*auto cost = G_Value * H_Value;
-			this->guard.lock();
-			if (this->bestValue > cost && H_Value != -1)
-			{
-				this->bestValue = cost;
-				this->bestHeight = G_Value;
-				this->bestWidth = H_Value;
-				this->bestCombination = variantStack;
-			}
-			this->guard.unlock();*/
 			CalculateCostsWithMutex(variantStack);
 		}
 		else if (depth < this->types.size())
