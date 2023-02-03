@@ -127,6 +127,11 @@ void RectanglePlacer::CreateRectangle()
 RectanglePlacer::~RectanglePlacer()
 {
 	this->startNode = nullptr;
+	if (this->blankVariant != nullptr)
+	{
+		delete blankVariant;
+		blankVariant = nullptr;
+	}
 }
 
 bool RectanglePlacer::allowedToGoDown()

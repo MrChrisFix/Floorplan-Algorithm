@@ -59,14 +59,14 @@ unsigned PlacementGraph::calculateHGraph(std::map<Type*, VariantRectangle*>& pla
 
 unsigned PlacementGraph::calculateUncompleteGGraph(std::map<Type*, Variant*>& configuration, GraphNode* startNode)
 {
-	if (startNode->isEndNode())
+	if (startNode->isEnd)
 		return 0;
 
 	unsigned max = 0;
-	for (auto& node : startNode->down)
+	for (auto node : startNode->down)
 	{
 		unsigned myCost = 0;
-		if (!node->isStartNode())
+		if (!node->isRoot)
 		{
 			Variant* var = configuration[node->GetType()];
 			if(var != nullptr)
@@ -82,20 +82,20 @@ unsigned PlacementGraph::calculateUncompleteGGraph(std::map<Type*, Variant*>& co
 
 unsigned PlacementGraph::calculateUncompleteHGraph(std::map<Type*, Variant*>& configuration, GraphNode* startNode)
 {
-	if (startNode->isEndNode())
+	if (startNode->isEnd)
 		return 0;
 
 	unsigned max = 0;
-	for (auto& node : startNode->right)
+	for (auto node : startNode->right)
 	{
 		unsigned myCost = 0;
-		if (!node->isStartNode())
+		if (!node->isRoot)
 		{
 			Variant* var = configuration[node->GetType()];
 			if (var != nullptr)
 				myCost = var->GetWidth();
 		}
-		int cost = calculateUncompleteHGraph(configuration, node) + myCost;
+		unsigned cost = calculateUncompleteHGraph(configuration, node) + myCost;
 		if (cost > max)
 			max = cost;
 	}

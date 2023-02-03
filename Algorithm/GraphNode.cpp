@@ -26,6 +26,7 @@ std::vector<GraphNode*>& GraphNode::GetVectorBySide(SIDE side)
     default:
         break;
     }
+    return this->right;
 }
 
 std::vector<GraphNode*>& GraphNode::GetVectorByOppsiteSide(SIDE side)
