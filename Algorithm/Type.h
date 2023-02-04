@@ -6,17 +6,30 @@
 
 namespace FPA {
 
+/**
+ * Class user for saving informations about a specfic type
+*/
 class Type
 {
 private:
 	std::vector<Variant*> variants; /// Vector with all variants of the type
 
-	std::string name;				/// Only for cosmetic purposes
+	std::string name;				/// Name of the type
 
+	/**
+	 * Method for removing all requirements
+	*/
 	void RemoveAllRequirements();
 
 public:
+	/**
+	 * Constructor
+	 * @param typeName Name of the created Type
+	*/
 	Type(std::string typeName);
+	/**
+	 * Desctructor
+	*/
 	~Type();
 
 	//Requirements

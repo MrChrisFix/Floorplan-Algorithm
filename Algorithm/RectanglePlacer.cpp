@@ -214,8 +214,6 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 	bool rightGood = type->right.size() == 2 && rightVariantsHeight > nodeVariant->GetHeight() ||
 		rightVariantsHeight < nodeVariant->GetHeight();
 
-	//TODO!!!: This doens't take in consideration the elements, that are on the border
-
 	return (upGood && downGood && leftGood && rightGood);
 }
 

@@ -6,6 +6,9 @@
 #include <vector>
 #include "../Algorithm/Type.h"
 
+/**
+ * Class used for readig and saving vectors of types into XML files
+*/
 class XMLFileManager
 {
 private:

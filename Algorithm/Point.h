@@ -2,6 +2,9 @@
 
 namespace FPA
 {
+	/**
+	 * Struct for definign a point on a 2D plane
+	*/
 	struct Point
 	{
 		int X, Y;
