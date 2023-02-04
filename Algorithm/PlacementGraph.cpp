@@ -72,7 +72,7 @@ unsigned PlacementGraph::calculateUncompleteGGraph(std::map<Type*, Variant*>& co
 			if(var != nullptr)
 				myCost = var->GetHeight();
 		}
-		int cost = calculateUncompleteGGraph(configuration, node) + myCost;
+		unsigned cost = calculateUncompleteGGraph(configuration, node) + myCost;
 		if (cost > max)
 			max = cost;
 	}
