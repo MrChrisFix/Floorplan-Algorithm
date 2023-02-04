@@ -11,7 +11,7 @@ AlgorithmManager::AlgorithmManager()
 	this->bestHeight = -1;
 	this->caltulateMultithread = false;
 	this->threadNum = 0;
-	this->awaliableBufferSpace = 0;
+	this->availableBufferSpace = 0;
 }
 
 AlgorithmManager::~AlgorithmManager()
@@ -23,7 +23,7 @@ ResultStruct* AlgorithmManager::StartCalculations(unsigned int threads, bool mul
 {
 	this->caltulateMultithread = multiThread;
 	this->threadNum = threads;
-	this->awaliableBufferSpace = threads;
+	this->availableBufferSpace = threads;
 
 	auto start = std::chrono::system_clock::now();
 	this->Graphs->CreateGraph(this->types);
@@ -111,9 +111,9 @@ void AlgorithmManager::FindMultithread(unsigned depth, std::map<Type*, Variant*>
 		else if (depth < this->types.size())
 		{
 			this->bufferSizeGuard.lock();
-			if (this->awaliableBufferSpace > 0)
+			if (this->availableBufferSpace > 0)
 			{
-				awaliableBufferSpace--;
+				availableBufferSpace--;
 				this->WorkToDo.push_back(std::pair<int, std::map<Type*, Variant*>>(depth+1, variantStack));
 				this->bufferSizeGuard.unlock();
 				continue;
@@ -154,7 +154,7 @@ void AlgorithmManager::ManageThreads()
 			avaliableThreads--;
 			this->bufferSizeGuard.lock();
 			WorkToDo.pop_front();
-			this->awaliableBufferSpace++;
+			this->availableBufferSpace++;
 			this->bufferSizeGuard.unlock();
 		}
 

@@ -2,6 +2,9 @@
 
 namespace FPA {
 
+	/**
+	 * Enum describing possible sides
+	*/
 	enum class SIDE {
 		UP,
 		LEFT,
@@ -9,6 +12,11 @@ namespace FPA {
 		RIGHT
 	};
 
+	/**
+	 * Method for converting char to SIDE
+	 * @param direction The char to convert
+	 * @return SIDE based on given char
+	*/
 	inline SIDE CharToSide(char direction)
 	{
 		switch (direction)
@@ -24,6 +32,11 @@ namespace FPA {
 		}
 	}
 
+	/**
+	 * Method for converting SIDE to char
+	 * @param side The SIDE that should be converted
+	 * @return Uppercase char representing the SIDE
+	*/
 	inline char SideToChar(SIDE side)
 	{
 		switch (side)

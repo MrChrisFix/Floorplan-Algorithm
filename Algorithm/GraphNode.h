@@ -5,7 +5,7 @@
 namespace FPA {
 
 /**
- * The graphs G and H are used to calculate the height and width costs respectivly. 
+ * Class representing a node in the graph
 */
 class GraphNode
 {
@@ -50,19 +50,49 @@ public:
 	void ConnectWithNode(GraphNode* node, SIDE side);
 
 	/**
-	 * Getter
+	 * Getter for the type
 	 * @return The assigned type of the Node 
 	*/
 	Type* GetType();
 
+	/**
+	 * Getter for nodes on the right
+	 * @return reference to this->right
+	*/
 	std::vector<GraphNode*>& GetRightNodes();
+
+	/**
+	 * Getter for nodes on down
+	 * @return reference to this->down
+	*/
 	std::vector<GraphNode*>& GetDownNodes();
+
+	/**
+	 * Boolean for getting the info if the node is an end node
+	 * @return Is the node an end node
+	*/
 	bool isEndNode();
+
+	/**
+	 * Boolean for getting the info if the node is a start node
+	 * @return Is the node an start node
+	*/
 	bool isStartNode();
 
 private:
 
+	/**
+	 * Getter for the vector of the given SIDE
+	 * @param side the SIDE of whoose vector should be given
+	 * @return Reference to the vector of the given SIDE
+	*/
 	std::vector<GraphNode*>& GetVectorBySide(SIDE side);
+
+	/**
+	 * Getter for the vector of the opposite side of the given SIDE
+	 * @param side the SIDE of whoose oposite vector should be given
+	 * @return Reference to the vector of the opposite SIDE
+	*/
 	std::vector<GraphNode*>& GetVectorByOppsiteSide(SIDE side);
 
 };

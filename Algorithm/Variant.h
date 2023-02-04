@@ -4,11 +4,15 @@ namespace FPA {
 
 class Type; //<- avoiding a #include deadlock
 
+/**
+ * Class used for saving informations about a specific variant of a given Type
+*/
 class Variant
 {
 private:
 
-	unsigned int height, width;			/// The  height and width of the variant
+	unsigned int height;				/// The height of the vatiant
+	unsigned int width;					/// The width of the variant
 	Type* type;							/// The parent Type of the variant
 
 public:
