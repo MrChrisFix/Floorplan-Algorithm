@@ -165,10 +165,10 @@ bool RectanglePlacer::willFitAllElements(Type* type)
 		return false;
 
 	//Checks if N-1 elements fit on the side, so that the N-th element can also fit and eventually be much oversized
-	int rightVariantsHeight = 0;
-	int downVariantsWidth = 0;
-	int leftVariantsHeight = 0;
-	int upVariantsWidth = 0;
+	unsigned int rightVariantsHeight = 0;
+	unsigned int downVariantsWidth = 0;
+	unsigned int leftVariantsHeight = 0;
+	unsigned int upVariantsWidth = 0;
 	for (int i=0; i< type->right.size()-2 && type->right.size() > 1; i++)
 	{
 		Variant* var = configuration[type->right[i]];
