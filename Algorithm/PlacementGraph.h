@@ -8,9 +8,9 @@ namespace FPA {
 class PlacementGraph
 {
 private:
-	GraphNode *G_start, *G_end, *H_start, *H_end;	/// Node, which is on the edge and has no type
+	GraphNode *G_start, *G_end, *H_start, *H_end;	///< Node, which is on the edge and has no type
 
-	std::map<Type*, GraphNode*> TypeLookup;			/// A lookup table for GraphNodes based on the Type
+	std::map<Type*, GraphNode*> TypeLookup;			///< A lookup table for GraphNodes based on the Type
 
 	/**
 	 * Method for calculating the cost of the G graph based on the plane of rectangles

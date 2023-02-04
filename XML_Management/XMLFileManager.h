@@ -13,7 +13,7 @@ class XMLFileManager
 {
 private:
 
-	rapidxml::file<>* XMLFile;			/// Variable needed for rapidxml node iteration
+	rapidxml::file<>* XMLFile;			///< Variable needed for rapidxml node iteration
 	/**
 	 * Private method for opening xml and setting the XMLFile variable
 	 * @param path Filepath of the xml

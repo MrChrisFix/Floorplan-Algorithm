@@ -13,28 +13,26 @@ class GraphNode
 	friend class RectanglePlacer;
 
 private:
-	std::vector<GraphNode*> up;		///Vector with the nodes that are up
-	std::vector<GraphNode*> left;	///Vector with the nodes that are to the left
-	std::vector<GraphNode*> down;	///Vector with the nodes that are down
-	std::vector<GraphNode*> right;	///Vector with the nodes that are to the right
+	std::vector<GraphNode*> up;		///< Vector with the nodes that are up
+	std::vector<GraphNode*> left;	///< Vector with the nodes that are to the left
+	std::vector<GraphNode*> down;	///< Vector with the nodes that are down
+	std::vector<GraphNode*> right;	///< Vector with the nodes that are to the right
 
-	Type* type;						///The type the node is representing
+	Type* type;						///< The type the node is representing
 
-	bool isRoot;					///Indication if the node is the root node
-	bool isEnd;						///Indication if the node is the last node (most left in H and most down in G)
+	bool isRoot;					///< Indication if the node is the root node
+	bool isEnd;						///< Indication if the node is the last node (most left in H and most down in G)
 
 public:
 	/**
 	 * Constructor for root and end node
 	 * @param isRoot true -> root; false -> end
-	 * @param is_H_Graph Which attribute (height or width) should be used for calculations
 	*/
 	GraphNode(bool isRoot);
 
 	/**
 	 * Constructor for a regular node
 	 * @param theType The type the node should represent
-	 * @param is_H_Graph Which attribute (height or width) should be used for calculations
 	*/
 	GraphNode(Type* theType);
 	/**
@@ -46,6 +44,7 @@ public:
 	 * Adds given node to the vector of the given side.
 	 * The method also adds the invoked node in the opposite side vector of the given node
 	 * @param node The node to add
+	 * @param side The side the neighboring node should be
 	*/
 	void ConnectWithNode(GraphNode* node, SIDE side);
 

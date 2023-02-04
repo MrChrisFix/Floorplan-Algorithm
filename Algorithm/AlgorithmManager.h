@@ -12,24 +12,24 @@ namespace FPA {
 class AlgorithmManager
 {
 private:
-	std::vector<Type*> types;						/// The vector of types used for all calculations
-	PlacementGraph* Graphs;							/// The graph
+	std::vector<Type*> types;						///< The vector of types used for all calculations
+	PlacementGraph* Graphs;							///< The graph
 
 	//Calc
-	unsigned bestValue;								/// The current best area
-	unsigned bestWidth;								/// The currently best width
-	unsigned bestHeight;							/// The currently best height
-	std::map<Type*, Variant*> bestCombination;		/// The currently best combination of variants
+	unsigned bestValue;								///< The current best area
+	unsigned bestWidth;								///< The currently best width
+	unsigned bestHeight;							///< The currently best height
+	std::map<Type*, Variant*> bestCombination;		///< The currently best combination of variants
 
 	//Multithreading
-	short threadNum;								/// The number of threads which should be used in multithreading
-	int availableBufferSpace;						/// The number of items, that can be added to the WorkToDo buffer
-	bool caltulateMultithread;						/// Should the aplication use multithreading
-	std::mutex bufferSizeGuard;						/// Semaphore protecting the buffer
-	std::mutex guard;								/// Semaphore protecting the best values
+	short threadNum;								///< The number of threads which should be used in multithreading
+	int availableBufferSpace;						///< The number of items, that can be added to the WorkToDo buffer
+	bool caltulateMultithread;						///< Should the aplication use multithreading
+	std::mutex bufferSizeGuard;						///< Semaphore protecting the buffer
+	std::mutex guard;								///< Semaphore protecting the best values
 
 public:
-	std::deque<std::pair<int, std::map<Type*, Variant*>>> WorkToDo;		/// Buffer of tasks for multithreading
+	std::deque<std::pair<int, std::map<Type*, Variant*>>> WorkToDo;		///< Buffer of tasks for multithreading
 
 public:
 	/**

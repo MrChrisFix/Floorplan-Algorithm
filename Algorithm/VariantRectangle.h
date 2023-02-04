@@ -8,8 +8,8 @@ namespace FPA {
 class VariantRectangle
 {
 private:
-	Variant* _variant;			/// The representing variant
-	Point _topLeft;				/// The top left point of the rectangle
+	Variant* _variant;			///< The representing variant
+	Point _topLeft;				///< The top left point of the rectangle
 
 public:
 	/**

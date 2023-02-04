@@ -22,20 +22,20 @@ private:
 		Parent(GraphNode* nodeptr, int nextRight, int nextDown) : node(nodeptr), rightIndex(nextRight), downIndex(nextDown) {};
 	};
 
-	std::map<Type*, VariantRectangle*> plane;		/// Holds the plane of currently placed rectangles
-	GraphNode* startNode = nullptr;					/// The starting node of a graph
-	std::map<Type*, Variant*> configuration;		/// Given configuration of Variants
-	Variant* blankVariant = nullptr;				/// A variant, that has the width and height equal 0
-	GraphNode* lastBottomVar = nullptr;				/// Helper poiter for remembering a GraphNode in a specific situation
+	std::map<Type*, VariantRectangle*> plane;		///< Holds the plane of currently placed rectangles
+	GraphNode* startNode = nullptr;					///< The starting node of a graph
+	std::map<Type*, Variant*> configuration;		///< Given configuration of Variants
+	Variant* blankVariant = nullptr;				///< A variant, that has the width and height equal 0
+	GraphNode* lastBottomVar = nullptr;				///< Helper poiter for remembering a GraphNode in a specific situation
 
 	//Managing
-	std::stack<Parent> parentPtrs;					/// Stack of Parents, which holds all created rectangels before currentnode
-	GraphNode* currentNode = nullptr;				/// The grapNode of the currenctly created rectangle
-	int currentRightIndex = 0;						/// Index of the current node, that is created on the right
-	int currentDownIndex = 0;						/// Index of the current node, that is created ti the down
+	std::stack<Parent> parentPtrs;					///< Stack of Parents, which holds all created rectangels before currentnode
+	GraphNode* currentNode = nullptr;				///< The grapNode of the currenctly created rectangle
+	int currentRightIndex = 0;						///< Index of the current node, that is created on the right
+	int currentDownIndex = 0;						///< Index of the current node, that is created ti the down
 
-	Point pt;										/// Point for creating next rectangle
-	Point suggestedPt;								/// Point for creating next rectangle
+	Point pt;										///< Point for creating next rectangle
+	Point suggestedPt;								///< Point for creating next rectangle
 
 	/**
 	 * The main method of the class. It runs a while loop until all rectangles are placed.

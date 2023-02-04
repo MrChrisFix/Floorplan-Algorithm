@@ -12,9 +12,9 @@ namespace FPA {
 class Type
 {
 private:
-	std::vector<Variant*> variants; /// Vector with all variants of the type
+	std::vector<Variant*> variants; ///< Vector with all variants of the type
 
-	std::string name;				/// Name of the type
+	std::string name;				///< Name of the type
 
 	/**
 	 * Method for removing all requirements
@@ -33,10 +33,10 @@ public:
 	~Type();
 
 	//Requirements
-	std::vector<Type*> right;		/// Types required to be on the right
-	std::vector<Type*> down;		/// Types required to be down
-	std::vector<Type*> left;		/// Types required to be on the left
-	std::vector<Type*> up;			/// Types required to be up
+	std::vector<Type*> right;		///< Types required to be on the right
+	std::vector<Type*> down;		///< Types required to be down
+	std::vector<Type*> left;		///< Types required to be on the left
+	std::vector<Type*> up;			///< Types required to be up
 
 	/**
 	 * Name setter 

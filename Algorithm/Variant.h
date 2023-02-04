@@ -11,9 +11,9 @@ class Variant
 {
 private:
 
-	unsigned int height;				/// The height of the vatiant
-	unsigned int width;					/// The width of the variant
-	Type* type;							/// The parent Type of the variant
+	unsigned int height;				///< The height of the vatiant
+	unsigned int width;					///< The width of the variant
+	Type* type;							///< The parent Type of the variant
 
 public:
 	
