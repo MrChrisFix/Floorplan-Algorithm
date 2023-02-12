@@ -5,18 +5,23 @@
 class TimeTester
 {
 private:
+	struct Info
+	{
+		int threadNum;
+		long long time;
+		bool multithread;
+		Info(int th, long long time, bool multi) : threadNum(th), time(time), multithread(multi) {};
+	};
 
-	void saveCSV(std::vector<std::pair<int, long long>> times, bool multipleTypes, int constAmount);
+	void saveCSV(std::string name, std::vector<Info> data);
 
 public:
 	//TimeTester();
 	//~TimeTester();
 
-	void MultipleTypesConstVaraint(int typesMin, int typesMax, int variantsAmount);
+	void CalculateTimes(std::string pathToXml, std::string outputFileName, int maxThreads, int iterations = 20);
 
-	void ConstTypesMultipleVariants(int typesAmount, int variantsMin, int variantsMax);
-
-	std::vector<FPA::Type*> TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements);
+	//std::vector<FPA::Type*> TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements);
 
 };
 

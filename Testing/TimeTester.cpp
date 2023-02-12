@@ -5,40 +5,23 @@
 #include <chrono>
 #include <sstream>
 #include <fstream>
+#include "../XML_Management/XMLFileManager.h"
 
 #pragma warning( disable : 4996)
 
 using namespace FPA;
 
-void TimeTester::saveCSV(std::vector<std::pair<int, long long>> times, bool multipleTypes, int constAmount)
+void TimeTester::saveCSV(std::string name, std::vector<Info> data)
 {
-	std::string fileName = "";
-	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	std::string timestamp(25, ' ');
-	std::strftime(&timestamp[0], timestamp.size(), "%Y-%m-%d_%H-%M-%S", std::localtime(&now));
-
-	timestamp.erase(std::find(timestamp.begin(), timestamp.end(), '\0'), timestamp.end());
 	std::stringstream text;
-	text << "Amount of types;Amount of variants;Time\n";
+	text << "Threads;Time;isMultithread\n";
 
-	if (multipleTypes)
+	for (auto& elem : data)
 	{
-		fileName += "MultipleTypes_" + std::to_string(constAmount) + "v " + timestamp;
-		
-		for (auto& line : times)
-		{
-			text << line.first << ";" << constAmount << ";" << line.second <<"\n";
-		}
+		text << elem.threadNum << ";" << elem.time << ";" << elem.multithread << "\n";;
 	}
-	else
-	{
-		fileName += "ConstTypes" + std::to_string(constAmount) + "t " + timestamp;
 
-		for (auto& line : times)
-		{
-			text << constAmount << ";" << line.first << ";" << line.second << "\n";;
-		}
-	}
+	std::string fileName = name;
 	fileName = "Testing/Results/" + fileName + ".csv";
 
 	std::ofstream file;
@@ -51,96 +34,81 @@ void TimeTester::saveCSV(std::vector<std::pair<int, long long>> times, bool mult
 	else throw;
 }
 
-void TimeTester::MultipleTypesConstVaraint(int typesMin, int typesMax, int variantsAmount)
+
+
+void TimeTester::CalculateTimes(std::string pathToXml, std::string outputFileName, int maxThreads, int iterations)
 {
-	std::vector<Type*> types;
-	std::vector<std::pair<int, long long>> times;
+	XMLFileManager xml;
+	auto types = xml.ReadFromXML(pathToXml);
 
-	types = TypeVectorCreator(typesMin, variantsAmount, false);
+	std::vector<Info> time;
 
-
-	AlgorithmManager manager;
-	for (int currentTypeAmount = typesMin; currentTypeAmount <= typesMax; currentTypeAmount++)
+	for (int j = 0; j < 20; j++)	// iterations
 	{
-		manager.setTypes(types);
-		ResultStruct* result = manager.StartCalculations(1, false);
-
-		times.push_back(std::pair<int, long long>(currentTypeAmount, result->time_microsec));
-
-		Type* newType = new Type(std::to_string(currentTypeAmount));
-
-		for (int j = 0; j < variantsAmount; j++)
+		FPA::AlgorithmManager* man = new FPA::AlgorithmManager();
+		man->setTypes(types);
+		auto res = man->StartCalculations(4, false);
+		time.push_back(Info(0, res->time_microsec, false));
+		delete man;
+		delete res;
+		for (int i = 1; i <= maxThreads; i++) //threads
 		{
-			newType->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
-		}
-		types.push_back(newType);
-	}
-
-	this->saveCSV(times, true, variantsAmount);
-}
-
-void TimeTester::ConstTypesMultipleVariants(int typesAmount, int variantsMin, int variantsMax)
-{
-	std::vector<Type*> types;
-	std::vector<std::pair<int, long long>> times;
-
-	types = TypeVectorCreator(typesAmount, variantsMin, false);
-	
-	AlgorithmManager manager;
-	for (int currentVarAmount = variantsMin; currentVarAmount <= variantsMax; currentVarAmount++)
-	{
-		manager.setTypes(types);
-		ResultStruct* result = manager.StartCalculations(1, false);
-
-		times.push_back(std::pair<int, long long>(currentVarAmount, result->time_microsec));
-
-		for(auto& t : types)
-			t->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
-	}
-
-	this->saveCSV(times, false, typesAmount);
-
-}
-
-std::vector<Type*> TimeTester::TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements)
-{
-	std::vector<Type*> types;
-
-	std::srand(time(nullptr));
-
-	for (int i = 0; i < typesAmount; i++)
-	{
-		Type* newType = new Type(std::to_string(i));
-		for (int j = 0; j < variantsAmount; j++)
-		{
-			newType->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
-		}
-		types.push_back(newType);
-	}
-
-	if (withRequirements)
-	{
-		int i = 0;
-		for (auto& type : types)
-		{
-			int typeId;
-			do
-			{
-				typeId = rand() % typesAmount;
-			} while (typeId == i);
-
-			auto sasiad = types[typeId];
-
-			SIDE side;
-			if (typeId % 2 == 0) side = SIDE::RIGHT;
-			else if (typeId % 3 == 0) side = SIDE::DOWN;
-			else if (typeId % 5 == 0) side = SIDE::LEFT;
-			else side = SIDE::UP;
-			type->RemoveRequirement(sasiad, true); //A fix if the element is already a neighbour
-			type->AddRequirement(side, sasiad, true);
-			i++;
+			man = new FPA::AlgorithmManager();
+			man->setTypes(types);
+			res = man->StartCalculations(i, true);
+			time.push_back(Info(i, res->time_microsec, true));
+			delete man;
+			delete res;
 		}
 	}
 
-	return types;
+	saveCSV(outputFileName, time);
+	time.clear();
+
+
+	for (auto& t : types)
+		delete t;
 }
+
+//std::vector<Type*> TimeTester::TypeVectorCreator(int typesAmount, int variantsAmount, bool withRequirements)
+//{
+//	std::vector<Type*> types;
+//
+//	std::srand(time(nullptr));
+//
+//	for (int i = 0; i < typesAmount; i++)
+//	{
+//		Type* newType = new Type(std::to_string(i));
+//		for (int j = 0; j < variantsAmount; j++)
+//		{
+//			newType->AddVariant(1 + std::rand() % 20, 1 + std::rand() % 20);
+//		}
+//		types.push_back(newType);
+//	}
+//
+//	if (withRequirements)
+//	{
+//		int i = 0;
+//		for (auto& type : types)
+//		{
+//			int typeId;
+//			do
+//			{
+//				typeId = rand() % typesAmount;
+//			} while (typeId == i);
+//
+//			auto sasiad = types[typeId];
+//
+//			SIDE side;
+//			if (typeId % 2 == 0) side = SIDE::RIGHT;
+//			else if (typeId % 3 == 0) side = SIDE::DOWN;
+//			else if (typeId % 5 == 0) side = SIDE::LEFT;
+//			else side = SIDE::UP;
+//			type->RemoveRequirement(sasiad, true); //A fix if the element is already a neighbour
+//			type->AddRequirement(side, sasiad, true);
+//			i++;
+//		}
+//	}
+//
+//	return types;
+//}
