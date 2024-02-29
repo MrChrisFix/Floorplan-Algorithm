@@ -1,4 +1,4 @@
-# Raw-Floorplan-Algorithm - Work in progress
+# Floorplan-Algorithm
 
 ## Basic concept
 The whole algorithm is based on the idea presented [in this article](https://www.mcs.anl.gov/~itf/dbpp/text/node21.html). 
