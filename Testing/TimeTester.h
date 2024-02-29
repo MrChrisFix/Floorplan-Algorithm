@@ -2,6 +2,9 @@
 #include <vector>
 #include "../Algorithm/Type.h"
 
+/// <summary>
+/// Class for measuring time at different thread counts
+/// </summary>
 class TimeTester
 {
 private:

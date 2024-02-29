@@ -47,7 +47,7 @@ void TimeTester::CalculateTimes(std::string pathToXml, std::string outputFileNam
 	{
 		FPA::AlgorithmManager* man = new FPA::AlgorithmManager();
 		man->setTypes(types);
-		auto res = man->StartCalculations(4, false);
+		auto res = man->StartCalculations(4);
 		time.push_back(Info(0, res->time_microsec, false));
 		delete man;
 		delete res;
@@ -55,7 +55,7 @@ void TimeTester::CalculateTimes(std::string pathToXml, std::string outputFileNam
 		{
 			man = new FPA::AlgorithmManager();
 			man->setTypes(types);
-			res = man->StartCalculations(i, true);
+			res = man->StartCalculations(i);
 			time.push_back(Info(i, res->time_microsec, true));
 			delete man;
 			delete res;

@@ -45,10 +45,9 @@ public:
 	/**
 	 * The main method of this class.
 	 * @param threads Number of thread the algorithm should be using
-	 * @param multiThread Should the aplication use multithreading
 	 * @return The result of the optimization. The values are empty and 0 if no result at all was found.
 	*/
-	ResultStruct* StartCalculations(unsigned int threads, bool multiThread = false);
+	ResultStruct* StartCalculations(unsigned int threads);
 
 	/**
 	 * Sets the type vector

@@ -19,9 +19,9 @@ AlgorithmManager::~AlgorithmManager()
 	delete this->Graphs;
 }
 
-ResultStruct* AlgorithmManager::StartCalculations(unsigned int threads, bool multiThread)
+ResultStruct* AlgorithmManager::StartCalculations(unsigned int threads)
 {
-	this->caltulateMultithread = multiThread;
+	this->caltulateMultithread = threads > 1;
 	this->threadNum = threads;
 	this->availableBufferSpace = threads;
 
